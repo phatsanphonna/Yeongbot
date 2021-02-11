@@ -21,6 +21,7 @@ with open('bot_token.json') as f:
 intents = discord.Intents.all()
 
 # * Bot's Infomations
+TOKEN = data['token']
 client = commands.Bot(command_prefix='.', intents=intents,
                       case_insensitive=True)
 
@@ -493,4 +494,4 @@ async def send(ctx, arg=None):
 
 
 # ! Run / Required Token to run
-client.run(data['token'])
+client.run(TOKEN)
