@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import Spotify
 
 import time
@@ -10,11 +10,11 @@ import pytz
 from pytz import timezone
 
 import random
-import logging
 import json
+from itertools import cycle
 
 # ! Load data/bot_token.json file
-with open('data/bot_token.json') as token:
+with open('data/client_token.json') as token:
     token = json.load(token)
 
 # * Import data/hug.json file
@@ -25,6 +25,14 @@ with open('data/hug.json') as hug:
 with open('data/izone.json') as izone:
     izone = json.load(izone)
 
+# * Import data/malee.json file
+with open('data/malee.json') as malee:
+    malee = json.load(malee)
+
+# * Import data/client_playing.json file
+with open('data/client_playing.json') as client_playing:
+    client_playing = json.load(client_playing)
+
 # * Intents Settings
 intents = discord.Intents.all()
 
@@ -32,6 +40,7 @@ intents = discord.Intents.all()
 TOKEN = token['token']
 client = commands.Bot(command_prefix='.', intents=intents,
                       case_insensitive=True)
+status = cycle(client_playing)
 
 # * Remove Commands
 client.remove_command('help')
@@ -47,15 +56,22 @@ CHANNEL_ID = 562590723875143680
 # * When bot is online
 @client.event
 async def on_ready():
+    change_status.start()
+    print("Bot is online!")
+
+
+# * Change status of client
+@tasks.loop(seconds=180)
+async def change_status():
     await client.change_presence(
         status=discord.Status.online,
         activity=discord.Activity(
             type=discord.ActivityType.listening,
-            name="D-D-DANCE"))
-    print("Bot is online!")
-
+            name=next(status)))
 
 # * When users joined the server.
+
+
 @client.event
 async def on_member_join(member):
     guild = client.get_guild(GUILD_ID)
@@ -92,7 +108,9 @@ async def on_member_join(member):
     embed_dm_image.set_image(
         url='https://thumbs.gfycat.com/FarflungScaredDartfrog-size_restricted.gif')
 
-    # This is important!, do not !!forget!! this!, Set This before send message.
+    # This is important!,
+    # do not !!forget!! this!,
+    # Set This before send message.
     await client.wait_until_ready()
 
     await member.add_roles(role)
@@ -124,7 +142,9 @@ async def on_member_remove(member):
     embed.set_footer(text=member.name + " ออกจากเซิฟไปตอน " +
                      new_omr_timezone_time.strftime("%d/%m/%Y, %H:%M"))
 
-    # This is important!, do not !!forget!! this!, Set This before send message.
+    # This is important!,
+    # do not !!forget!! this!,
+    # Set This before send message.
     await client.wait_until_ready()
 
     await channel.send(embed=embed)
@@ -163,7 +183,7 @@ async def on_message(message):
         await message.channel.send(f"เหี้ย")
 
     # ? If user type "sundick"
-    if text("sundick"):
+    if text('sundick'):
         rd = random.randint(1, 3)
 
         if rd < 3:
@@ -223,7 +243,7 @@ async def help(ctx):
     embed.add_field(name="hello / hi",
                     value="สวัสดีไงเพื่อนรัก", inline=True)  # ? (.hello / .hi)
     embed.add_field(name="send",
-                    value="ขอให้บอทส่งรูป", inline=True)  # ? (.send <arg>)
+                    value="ขอให้บอทส่งอะไรสักอย่าง", inline=True)  # ? (.send <arg>)
 
     await ctx.author.send(embed=embed)
 
@@ -241,7 +261,7 @@ async def userinfo(ctx, member: discord.Member):
                     value=member.display_name, inline=True)
     embed.add_field(name="วันที่เข้ามาในร้าน",
                     value='{}'.format(
-                        member.joined_at.strftime("%d/%m/%Y")),
+                         member.joined_at.strftime("%d/%m/%Y")),
                     inline=False)
     embed.add_field(name="ไอดี", value=member.id, inline=False)
     embed.set_thumbnail(url=member.avatar_url)
@@ -315,11 +335,14 @@ async def call(ctx, user: discord.Member = None):
         await ctx.send("ถ้าต้องการเรียกใครมาตอบให้พิม .call <username> นะคะ")
 
     elif ctx.author != user:  # ? user != sender
-        call_rd = random.randint(1, 5)
+        call_msg = [
+            f"**{ctx.author.mention}** เรียกคุณที่ `{ctx.guild.name}`, "
+            + f"{ctx.channel.mention} ค่ะ โปรดมาตอบกลับด้วย",
+            f"ฮัลโหล... อยู่รึปล่าว, มีคนเรียกแกอ่ะ ลองมาดูที่ {ctx.channel.mention} ดูดิ"
+        ]
+        call_rd = random.choice(call_msg)
 
-        for call in range(call_rd):
-            await user.send(f"**{ctx.author.mention}** เรียกคุณที่ `{ctx.guild.name}`, "
-                            + f"{ctx.channel.mention} ค่ะ โปรดมาตอบกลับด้วย")
+        await user.send(call_msg)
 
     else:  # user = sender
         embed = discord.Embed()
@@ -339,7 +362,14 @@ async def ping(ctx):
 # * When users uses command (.hello)
 @client.command(aliases=['hi'])
 async def hello(ctx):
-    await ctx.send(f"> สวัสดีจ้า {ctx.author.mention}")
+    hello_msg = [
+        f'สวัสดีจ้า {ctx.author.mention}',
+        f'สวัสดี, {ctx.author.mention}',
+        f'Hello {ctx.author.mention}',
+        f'Hello, World',
+        f'你好！{ctx.author.mention}'
+    ]
+    await ctx.send(f"> {random.choice(hello_msg)}")
 
 
 # * When users use command (.clock)
@@ -380,7 +410,6 @@ async def botinfo(ctx):
     await ctx.send(embed=embed)
 
 
-# TODO: Fill hug and izone image until finish
 # * When users use command (.send)
 @client.command()
 async def send(ctx, arg=None):
@@ -391,49 +420,45 @@ async def send(ctx, arg=None):
         embed_arg_none.add_field(name="izone", value="IZ*ONE น้องหยองชอบมักๆ")
         embed_arg_none.add_field(name="nude", value="ต้องการรูปสินะ... 555555")
         embed_arg_none.add_field(name="quote", value="อยากได้คำคมหรอ?")
+        embed_arg_none.add_field(name="malee", value="แตกหนึ่ง! สวยพี่สวย!")
 
         await ctx.send(embed=embed_arg_none)
 
-    # ? If arg is hug (.send hug)
-    if arg == 'hug':
-        hug_rd = random.choice(hug)
+    else:
+        embed = discord.Embed()
 
-        embed_hug = discord.Embed()
-        embed_hug.set_image(url=hug_rd)
+        # ? If arg is hug (.send hug)
+        if arg == 'hug':
+            hug_rd = random.choice(hug)
+            embed.set_image(url=hug_rd)
 
-        await ctx.send(embed=embed_hug)
+        # ? If arg is izone (.send izone)
+        if arg == 'izone':
+            izone_rd = random.choice(izone)
+            embed.set_image(url=izone_rd)
 
-    # ? If arg is izone (.send izone)
-    if arg == 'izone':
-        izone_rd = random.choice(izone)
-
-        embed_izone = discord.Embed()
-        embed_izone.set_image(url=izone_rd)
-
-        await ctx.send(embed=embed_izone)
-
-    # ? If arg is nudes (.send nude)
-    if arg == 'nude':
-        nude_rd = random.randint(1, 2)
-
-        if nude_rd == 1:
-            for send_nude_rd in range(random.randint(1, 5)):
-                await ctx.send(f'{ctx.author.mention} ไอนี้มันเป็นคนแย่ มันขอรูปเปลือยในที่สาธารณะ')
-        elif nude_rd == 2:
-            embed_nude_rd_2 = discord.Embed()
-            embed_nude_rd_2.set_image(
+        # ? If arg is nudes (.send nude)
+        if arg == 'nude':
+            embed.set_image(
                 url='https://i.makeagif.com/media/2-10-2021/g_z7xe.gif')
 
-            await ctx.send(embed=embed_nude_rd_2)
+        if arg == 'malee':
+            malee_rd = random.choice(malee)
+            embed.set_image(
+                url=malee_rd)
 
-    # ? If arg is quote (.send quote)
-    if arg == 'quote':
-        quote = [
-            "เห็นแดดแล้วตาหยี"
-        ]
-        quote_rd = random.choice(quote)
+        # ? If arg is quote (.send quote)
+        if arg == 'quote':
+            quote = [
+                "เห็นแดดแล้วตาหยี",
+                "คำคมบาดใจ"
+            ]
+            quote_rd = random.choice(quote)
 
-        await ctx.send(f'> ***{quote_rd}***')
+            await ctx.send(f'> ***{quote_rd}***')
+            return
+
+        await ctx.send(embed=embed)
 
 
 # ! Run / Required Token to run

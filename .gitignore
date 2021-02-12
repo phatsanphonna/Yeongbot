@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # Token
-bot_token.json
+client_token.json
 
 # Other Files
 getbot.py
