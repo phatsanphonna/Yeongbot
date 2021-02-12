@@ -14,14 +14,15 @@ import random
 import logging
 import json
 
-with open('bot_token.json') as f:
-    data = json.load(f)
+# * Open bot_token.json file
+with open('data/bot_token.json') as token:
+    token = json.load(token)
 
 # * Intents Settings
 intents = discord.Intents.all()
 
 # * Bot's Infomations
-TOKEN = data['token']
+TOKEN = token['token']
 client = commands.Bot(command_prefix='.', intents=intents,
                       case_insensitive=True)
 
@@ -487,10 +488,19 @@ async def send(ctx, arg=None):
 
     # ? If arg is quote (.send quote)
     if arg == 'quote':
+        #//// * Open data.json file
+        #////with open('data.json') as data:
+            #////data = json.load(data)
+
         quote_rd = random.randint(1, 5)
 
+        #////for quote in data['data']:
+            #////print(quote['1'])
+        
         if quote_rd == 1:
-            await ctx.send()
+            await ctx.send('> คำคมนี้มันจะบาดตาบาดใจสักแค่ไหนกันเชียว')
+        elif quote_rd == 1:
+            await ctx.send('> เห็นแดดตาหยี')
 
 
 # ! Run / Required Token to run
