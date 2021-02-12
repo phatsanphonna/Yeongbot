@@ -3,7 +3,6 @@ from discord.ext import commands
 from discord import Spotify
 
 import time
-
 import datetime
 from datetime import datetime
 
@@ -14,9 +13,17 @@ import random
 import logging
 import json
 
-# * Open bot_token.json file
+# ! Load data/bot_token.json file
 with open('data/bot_token.json') as token:
     token = json.load(token)
+
+# * Import data/hug.json file
+with open('data/hug.json') as hug:
+    hug = json.load(hug)
+
+# * Import data/izone.json file
+with open('data/izone.json') as izone:
+    izone = json.load(izone)
 
 # * Intents Settings
 intents = discord.Intents.all()
@@ -185,7 +192,7 @@ async def on_message(message):
                 while counting >= timer:
                     await sender.edit(mute=False, deafen=False)
                     break
-        
+
         elif rd == 3:
             await message.channel.send(f"น้อง {sender.mention} โชคดีที่ไม่โดนปิดไมค์ไปนะ แต่ครั้งหน้าก็ระวังไว้ด้วยละกันหล่ะ")
 
@@ -311,7 +318,8 @@ async def call(ctx, user: discord.Member = None):
         call_rd = random.randint(1, 5)
 
         for call in range(call_rd):
-            await user.send(f"**{ctx.author.mention}** เรียกคุณที่ {ctx.guild.name}, {ctx.channel.mention} ค่ะ โปรดมาตอบกลับด้วย")
+            await user.send(f"**{ctx.author.mention}** เรียกคุณที่ `{ctx.guild.name}`, "
+                            + f"{ctx.channel.mention} ค่ะ โปรดมาตอบกลับด้วย")
 
     else:  # user = sender
         embed = discord.Embed()
@@ -388,86 +396,19 @@ async def send(ctx, arg=None):
 
     # ? If arg is hug (.send hug)
     if arg == 'hug':
-        hug_rd = random.randint(1, 13)
-        embed_hug = discord.Embed()
+        hug_rd = random.choice(hug)
 
-        if hug_rd == 1:
-            embed_hug.set_image(
-                url='https://media1.tenor.com/images/9dec8539c8609196df55de188472ae37/tenor.gif')
-        elif hug_rd == 2:
-            embed_hug.set_image(
-                url='https://i.pinimg.com/originals/6b/03/8c/6b038c71d327aca16de4bc198fb710f2.jpg')
-        elif hug_rd == 3:
-            embed_hug.set_image(
-                url='https://i.redd.it/5824h8uby8841.jpg')
-        elif hug_rd == 4:
-            embed_hug.set_image(
-                url='https://thumbs.gfycat.com/InfatuatedFastBluet-max-1mb.gif')
-        elif hug_rd == 5:
-            embed_hug.set_image(
-                url='https://thumbs.gfycat.com/ScentedNearHectorsdolphin-max-1mb.gif')
-        elif hug_rd == 6:
-            embed_hug.set_image(
-                url='https://media.giphy.com/media/vRJXuIhTWenUYWgFZT/giphy.gif')
-        elif hug_rd == 7:
-            embed_hug.set_image(
-                url='https://pa1.narvii.com/6960/803810a086327d11b9850e1c5347732c33c07a98r1-600-480_hq.gif')
-        elif hug_rd == 8:
-            embed_hug.set_image(
-                url='https://media1.tenor.com/images/ae425776aac226f98ae367faf40b1d0d/tenor.gif')
-        elif hug_rd == 9:
-            embed_hug.set_image(
-                url='https://media1.tenor.com/images/3d4ea9a8343b7f8c62b54804ceeee820/tenor.gif')
-        elif hug_rd == 10:
-            embed_hug.set_image(
-                url='https://media1.tenor.com/images/91df71d695fcefc1d90f4203d67661c1/tenor.gif')
-        elif hug_rd == 11:
-            embed_hug.set_image(
-                url='https://i.pinimg.com/originals/a3/7c/a5/a37ca562d83a50b1467f9875ed8322b9.gif')
-        elif hug_rd == 12:
-            embed_hug.set_image(
-                url='https://c.tenor.com/qhYX_uLj2NAAAAAC/izone-minju.gif')
-        elif hug_rd == 13:
-            embed_hug.set_image(
-                url='https://pa1.narvii.com/6934/1027222f54d69e3c642c06bc8714b3c8e3224949r1-320-215_hq.gif')
+        embed_hug = discord.Embed()
+        embed_hug.set_image(url=hug_rd)
 
         await ctx.send(embed=embed_hug)
 
     # ? If arg is izone (.send izone)
     if arg == 'izone':
-        izone_rd = random.randint(1, 6)
-        embed_izone = discord.Embed()
+        izone_rd = random.choice(izone)
 
-        if izone_rd == 1:
-            embed_izone.set_image(
-                url='https://media1.tenor.com/images/86a3809e3dfa0e0b17ecba1d776f3f21/tenor.gif')
-        elif izone_rd == 2:
-            embed_izone.set_image(
-                url='https://media1.tenor.com/images/421a1c6c0d05f0f4c515cc9a44c98ff9/tenor.gif')
-        elif izone_rd == 3:
-            embed_izone.set_image(
-                url='https://media1.giphy.com/media/enQCEjBvRxT6UsIlYW/giphy.gif')
-        elif izone_rd == 4:
-            embed_izone.set_image(
-                url='https://thumbs.gfycat.com/BronzeGleamingLark-size_restricted.gif')
-        elif izone_rd == 5:
-            embed_izone.set_image(
-                url='https://media0.giphy.com/media/vvUTAPfZACsaIkdjW3/giphy.gif')
-        elif izone_rd == 6:
-            embed_izone.set_image(
-                url='https://i.pinimg.com/originals/42/1a/1c/421a1c6c0d05f0f4c515cc9a44c98ff9.gif')
-        elif izone_rd == 7:
-            embed_izone.set_image(
-                url='https://thumbs.gfycat.com/BraveFabulousGrasshopper-max-1mb.gif')
-        elif izone_rd == 8:
-            embed_izone.set_image(
-                url='https://i.pinimg.com/originals/37/1c/d0/371cd06385698091345cea743a958c1a.gif')
-        elif izone_rd == 9:
-            embed_izone.set_image(
-                url='https://data.whicdn.com/images/332011626/original.gif')
-        elif izone_rd == 10:
-            embed_izone.set_image(
-                url='https://thumbs.gfycat.com/FearlessGiantChinchilla-size_restricted.gif')
+        embed_izone = discord.Embed()
+        embed_izone.set_image(url=izone_rd)
 
         await ctx.send(embed=embed_izone)
 
@@ -485,22 +426,14 @@ async def send(ctx, arg=None):
 
             await ctx.send(embed=embed_nude_rd_2)
 
-
     # ? If arg is quote (.send quote)
     if arg == 'quote':
-        #//// * Open data.json file
-        #////with open('data.json') as data:
-            #////data = json.load(data)
+        quote = [
+            "เห็นแดดแล้วตาหยี"
+        ]
+        quote_rd = random.choice(quote)
 
-        quote_rd = random.randint(1, 5)
-
-        #////for quote in data['data']:
-            #////print(quote['1'])
-        
-        if quote_rd == 1:
-            await ctx.send('> คำคมนี้มันจะบาดตาบาดใจสักแค่ไหนกันเชียว')
-        elif quote_rd == 1:
-            await ctx.send('> เห็นแดดตาหยี')
+        await ctx.send(f'> ***{quote_rd}***')
 
 
 # ! Run / Required Token to run
