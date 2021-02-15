@@ -14,30 +14,35 @@ import json
 from itertools import cycle
 
 # ! Load data/bot_token.json file
-with open('data/client_token.json') as token:
-    token = json.load(token)
+with open('secret/client_secret.json') as client_secret:
+    secret = json.load(client_secret)
+
+# ! Import data/client_playing.json file
+with open('.data/client_playing.json') as client_playing:
+    client_playing = json.load(client_playing)
 
 # * Import data/hug.json file
-with open('data/hug.json') as hug:
+with open('.data/hug.json') as hug:
     hug = json.load(hug)
 
 # * Import data/izone.json file
-with open('data/izone.json') as izone:
+with open('.data/izone.json') as izone:
     izone = json.load(izone)
 
 # * Import data/malee.json file
-with open('data/malee.json') as malee:
+with open('.data/malee.json') as malee:
     malee = json.load(malee)
 
-# * Import data/client_playing.json file
-with open('data/client_playing.json') as client_playing:
-    client_playing = json.load(client_playing)
+# * Import data/video.json file
+with open('.data/video.json') as video:
+    video = json.load(video)
 
 # * Intents Settings
 intents = discord.Intents.all()
 
 # * Bot's Infomations
-TOKEN = token['token']
+TOKEN = secret['token']
+PASSWORD = secret['password']
 client = commands.Bot(command_prefix='.', intents=intents,
                       case_insensitive=True)
 status = cycle(client_playing)
@@ -46,7 +51,7 @@ status = cycle(client_playing)
 client.remove_command('help')
 
 # * Author's Informations
-author_icon = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
+AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
 
 # * Server's Infomations
 GUILD_ID = 545170933254717450
@@ -57,7 +62,7 @@ CHANNEL_ID = 562590723875143680
 @client.event
 async def on_ready():
     change_status.start()
-    print("Bot is online!")
+    print("Client is online!")
 
 
 # * Change status of client
@@ -88,7 +93,7 @@ async def on_member_join(member):
         description=f"อันยองน้อง {member.mention}\n เข้ามาที่ร้านโกโก้ของน้องซันนร้าาา",
         color=0x90ee90)
     embed_channel.set_author(
-        name="น้องหยอง", icon_url=author_icon)
+        name="น้องหยอง", icon_url=AUTHOR_ICON)
     embed_channel.set_thumbnail(url=member.avatar_url)
     embed_channel.set_footer(
         text=member.name + " เข้ามาในร้านโกโก้ตอน " + new_omj_timezone_time.strftime("%d/%m/%Y, %H:%M"))
@@ -100,7 +105,7 @@ async def on_member_join(member):
         color=0xd9598c)
     embed_dm.set_author(
         name="น้องหยอง",
-        icon_url=author_icon)
+        icon_url=AUTHOR_ICON)
     embed_dm.set_footer(text="น้องได้เข้ามาในร้านโกโก้ตอน " +
                         new_omj_timezone_time.strftime("%d/%m/%Y, %H:%M"))
 
@@ -137,7 +142,7 @@ async def on_member_remove(member):
         color=0xff0033)
     embed.set_author(
         name="น้องหยอง",
-        icon_url=author_icon)
+        icon_url=AUTHOR_ICON)
     embed.set_thumbnail(url=member.avatar_url)
     embed.set_footer(text=member.name + " ออกจากเซิฟไปตอน " +
                      new_omr_timezone_time.strftime("%d/%m/%Y, %H:%M"))
@@ -214,7 +219,8 @@ async def on_message(message):
                     break
 
         elif rd == 3:
-            await message.channel.send(f"น้อง {sender.mention} โชคดีที่ไม่โดนปิดไมค์ไปนะ แต่ครั้งหน้าก็ระวังไว้ด้วยละกันหล่ะ")
+            await message.channel.send(f"น้อง {sender.mention} โชคดีที่ไม่โดนปิดไมค์ไปนะ "
+                                       + "แต่ครั้งหน้าก็ระวังไว้ด้วยละกันหล่ะ")
 
     await client.process_commands(message)
 
@@ -225,10 +231,10 @@ async def help(ctx):
     embed = discord.Embed(title="คำสั่งทั้งหมด ขึ้นต้นด้วย .",
                           color=0xd9598c)
     embed.set_author(name="น้องหยอง",
-                     icon_url=author_icon)
+                     icon_url=AUTHOR_ICON)
     embed.add_field(name="help",
                     value=f"แสดงหน้าต่างนี้ไง", inline=True)  # ? (.help)
-    embed.add_field(name="userinfo / user <member>",
+    embed.add_field(name="whois <member>",
                     value="แสดงข้อมูลเกี่ยวกับคนในเซิฟเวอร์", inline=True)  # ? (.userinfo / .user)
     embed.add_field(name="spotify / listening <member>",
                     value="แสดงเพลงที่ member \nกำลังเล่นอยู่บน Spotify", inline=True)  # ? (.spotify / .listening)
@@ -236,8 +242,6 @@ async def help(ctx):
                     value="เรียกคนที่ต้องการเรียกหา", inline=True)  # ? (.call)
     embed.add_field(name="clock / time",
                     value="แสดงวันที่และเวลาในปัจจุบัน", inline=True)  # ? (.clock / .time)
-    embed.add_field(name="botinfo",
-                    value="แสดงรายละเอียดของบอท", inline=True)  # ? (.botinfo)
     embed.add_field(name="ping",
                     value="ทดสอบการตอบกลับ", inline=True)  # ? (.ping)
     embed.add_field(name="hello / hi",
@@ -248,28 +252,47 @@ async def help(ctx):
     await ctx.author.send(embed=embed)
 
 
-# * When users uses command (.userinfo / .user)
-@client.command(aliases=['user'])
-async def userinfo(ctx, member: discord.Member):
+# * When users uses command (.whois)
+@client.command()
+async def whois(ctx, member: discord.Member):
+    if member != client.user:
+        embed = discord.Embed(title=f"น้อง {member.name}",
+                              color=0xd9598c)
+        embed.set_author(name="น้องหยอง",
+                         icon_url=AUTHOR_ICON)
+        embed.add_field(name="ชื่อ", value=member.name, inline=True)
+        embed.add_field(name="ชื่อที่แสดง",
+                        value=member.display_name, inline=True)
+        embed.add_field(name="วันที่สมัครไอดี",
+                        value='{}'.format(
+                            member.created_at.strftime("%d/%m/%Y")),
+                        inline=False)
+        embed.add_field(name="วันที่เข้ามาในร้าน",
+                        value='{}'.format(
+                            member.joined_at.strftime("%d/%m/%Y")),
+                        inline=False)
+        embed.add_field(name="ไอดี", value=member.id, inline=False)
+        embed.set_footer(icon_url=ctx.author.avatar_url,
+                         text="ขอดูประวัติโดย {}".format(ctx.author.name))
+        embed.set_thumbnail(url=member.avatar_url)
 
-    embed = discord.Embed(title=f"น้อง {member.name}",
-                          color=0xd9598c)
-    embed.set_author(name="น้องหยอง",
-                     icon_url=author_icon)
-    embed.add_field(name="ชื่อ", value=member.name, inline=True)
-    embed.add_field(name="ชื่อที่แสดง",
-                    value=member.display_name, inline=True)
-    embed.add_field(name="วันที่เข้ามาในร้าน",
-                    value='{}'.format(
-                         member.joined_at.strftime("%d/%m/%Y")),
-                    inline=False)
-    embed.add_field(name="ไอดี", value=member.id, inline=False)
-    embed.set_thumbnail(url=member.avatar_url)
+    else:
+        embed = discord.Embed(
+            title="รายละเอียดของน้องหยอง",
+            color=0xd9598c)
+        embed.set_author(name="น้องหยอง",
+                         icon_url=AUTHOR_ICON)
+        embed.add_field(name="คนสร้างน้องหยอง", value="Sun#6284", inline=False)
+        embed.add_field(name="สร้างไว้ทำอะไร ?",
+                        value="ก็กูอยากสร้างอ่ะมีปัญหาอะไรไหม", inline=False)
+        embed.set_image(
+            url='https://thumbs.gfycat.com/PitifulSkinnyEuropeanpolecat-size_restricted.gif')
+        embed.set_thumbnail(url=client.user.avatar_url)
 
     await ctx.send(embed=embed)
 
 
-# * When users uses command (.spotify / .lsitening)
+# * When users uses command (.spotify / .listening)
 @client.command(aliases=['listening'])
 async def spotify(ctx, user: discord.Member = None):
     # ? If users did not put <username> argument,
@@ -320,9 +343,9 @@ async def spotify(ctx, user: discord.Member = None):
                 # ////embed.add_field(name="ระยะเวลา",
                 # ////value=f"{current_length}/{song_length}", inline=True)
                 embed.set_author(name="น้องหยอง",
-                                 icon_url=author_icon)
-                embed.set_footer(
-                    text=("{} เริ่มฟังตอน {} UTC".format(user.name, created_at_new_timezone_time.strftime("%H:%M"))))
+                                 icon_url=AUTHOR_ICON)
+                embed.set_footer(icon_url=user.avatar_url,
+                                 text=("{} เริ่มฟังตอน {} UTC".format(user.name, created_at_new_timezone_time.strftime("%H:%M"))))
 
                 await ctx.send(embed=embed)
 
@@ -390,31 +413,10 @@ async def clock(ctx):
     await ctx.send(embed=embed)
 
 
-# * When users use command (.botinfo)
-@client.command()
-async def botinfo(ctx):
-    creator_url = 'https://cdn.discordapp.com/avatars/254515724804947969/e22d5539f86680742088a7996f44c9ea.webp?size=1024'
-
-    embed = discord.Embed(
-        title="รายละเอียดของน้องหยอง",
-        color=0xd9598c)
-    embed.set_author(name="น้องหยอง",
-                     icon_url=author_icon)
-    embed.add_field(name="คนสร้างน้องหยอง", value="Sun#6284", inline=False)
-    embed.add_field(name="สร้างไว้ทำอะไร ?",
-                    value="ก็กูอยากสร้างอ่ะมีปัญหาอะไรไหม", inline=False)
-    embed.set_image(
-        url='https://thumbs.gfycat.com/PitifulSkinnyEuropeanpolecat-size_restricted.gif')
-    embed.set_thumbnail(url=creator_url)
-
-    await ctx.send(embed=embed)
-
-
 # * When users use command (.send)
 @client.command()
-async def send(ctx, arg=None):
-
-    if arg == None:
+async def send(ctx, arg1=None):
+    if arg1 == None:
         embed_arg_none = discord.Embed(title="คำสั่งหมวด send <arg>")
         embed_arg_none.add_field(name="hug", value="ต้องการกอดหรอ?")
         embed_arg_none.add_field(name="izone", value="IZ*ONE น้องหยองชอบมักๆ")
@@ -427,38 +429,75 @@ async def send(ctx, arg=None):
     else:
         embed = discord.Embed()
 
-        # ? If arg is hug (.send hug)
-        if arg == 'hug':
+        # ? If arg1 is hug (.send hug)
+        if arg1 == 'hug':
             hug_rd = random.choice(hug)
             embed.set_image(url=hug_rd)
 
         # ? If arg is izone (.send izone)
-        if arg == 'izone':
+        elif arg1 == 'izone':
             izone_rd = random.choice(izone)
             embed.set_image(url=izone_rd)
 
-        # ? If arg is nudes (.send nude)
-        if arg == 'nude':
+        # ? If arg is nude (.send nude)
+        elif arg1 == 'nude':
             embed.set_image(
                 url='https://i.makeagif.com/media/2-10-2021/g_z7xe.gif')
 
-        if arg == 'malee':
+        # ? If arg is malee (.send malee)
+        elif arg1 == 'malee':
             malee_rd = random.choice(malee)
-            embed.set_image(
-                url=malee_rd)
+            embed.set_image(url=malee_rd)
 
         # ? If arg is quote (.send quote)
-        if arg == 'quote':
+        elif arg1 == 'quote':
             quote = [
-                "เห็นแดดแล้วตาหยี",
-                "คำคมบาดใจ"
+                "เห็นแดดแล้วตาหยี...",
+                "คำคมบาดใจ",
+                "แค่พี่ยักคิ้ว ต้นงิ้วก็แค่สไลด์เดอร์",
+                "พี่ไม่ได้เจ้าชู้ แต่พี่ดูแลหนูได้ทุกคน",
+                "พี่ไม่ได้ดักเจ้า พี่รักแต่น้อง~",
+                "ธรรมะกระตุกจิดกระชากใจ",
+                "25x25 = 225",
+                "กลางวงล้อมอ่ะแตก!",
+                "แตกหนึ่ง! สวยพี่สวย",
+                "บ้านหนองกึ่ม",
+                "คนที่ไม่มีแฟน ทำแทนทุกเรื่องไม่ได้~",
+                "พี่จะยืนกดเงินตรงนี้อีกนานไหม ผมก็มีธุระเหมือนกัน~",
+                "ลุงจะดำรงตำแหน่งนายกอีกนานไหม ชาวบ้านเขาก็เดือดร้อนเหมือนกัน~"
             ]
             quote_rd = random.choice(quote)
 
-            await ctx.send(f'> ***{quote_rd}***')
+            await ctx.send(f'> *{quote_rd}*')
+            return
+
+        # ? If arg is video (.send video)
+        elif arg1 == 'video':
+            video_rd = random.choice(video)
+
+            await ctx.send(video_rd)
+            return
+
+        # ? If arg is None of the above (.send quoter)
+        else:
+            await ctx.send("พิมพ์ผิดป้ะเนี่ย!")
             return
 
         await ctx.send(embed=embed)
+
+
+# * When users use command (.connect <password>)
+@client.command(aliases=['join'])
+@commands.has_role("ว่าที่โปรแกรมเมอร์")
+async def connect(ctx, password_input=None):
+    channel = client.get_channel(CHANNEL_ID)
+    message = ctx.message
+    password = PASSWORD
+
+    if password_input == password:
+        channel = ctx.author.voice.channel
+        await channel.connect()
+        await ctx.author.delete_message(message)
 
 
 # ! Run / Required Token to run
