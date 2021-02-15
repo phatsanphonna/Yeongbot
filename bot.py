@@ -13,27 +13,31 @@ import random
 import json
 from itertools import cycle
 
-# ! Load data/bot_token.json file
+# ! Load secret/bot_token.json file
 with open('secret/client_secret.json') as client_secret:
-    secret = json.load(client_secret)
+    client_secret = json.load(client_secret)
 
-# ! Import data/client_playing.json file
+# ! Load secret/bot_token.json file
+with open('secret/server_secret.json') as server_secret:
+    server_secret = json.load(server_secret)
+
+# * Import .data/client_playing.json file
 with open('.data/client_playing.json') as client_playing:
     client_playing = json.load(client_playing)
 
-# * Import data/hug.json file
+# * Import .data/hug.json file
 with open('.data/hug.json') as hug:
     hug = json.load(hug)
 
-# * Import data/izone.json file
+# * Import .data/izone.json file
 with open('.data/izone.json') as izone:
     izone = json.load(izone)
 
-# * Import data/malee.json file
+# * Import .data/malee.json file
 with open('.data/malee.json') as malee:
     malee = json.load(malee)
 
-# * Import data/video.json file
+# * Import .data/video.json file
 with open('.data/video.json') as video:
     video = json.load(video)
 
@@ -41,8 +45,8 @@ with open('.data/video.json') as video:
 intents = discord.Intents.all()
 
 # * Bot's Infomations
-TOKEN = secret['token']
-PASSWORD = secret['password']
+TOKEN = client_secret['token']
+PASSWORD = client_secret['password']
 client = commands.Bot(command_prefix='.', intents=intents,
                       case_insensitive=True)
 status = cycle(client_playing)
@@ -54,8 +58,8 @@ client.remove_command('help')
 AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
 
 # * Server's Infomations
-GUILD_ID = 545170933254717450
-CHANNEL_ID = 562590723875143680
+GUILD_ID = server_secret['GUILD_ID']
+CHANNEL_ID = server_secret['CHANNEL_ID']
 
 
 # * When bot is online
@@ -74,9 +78,8 @@ async def change_status():
             type=discord.ActivityType.listening,
             name=next(status)))
 
+
 # * When users joined the server.
-
-
 @client.event
 async def on_member_join(member):
     guild = client.get_guild(GUILD_ID)
@@ -345,7 +348,8 @@ async def spotify(ctx, user: discord.Member = None):
                 embed.set_author(name="น้องหยอง",
                                  icon_url=AUTHOR_ICON)
                 embed.set_footer(icon_url=user.avatar_url,
-                                 text=("{} เริ่มฟังตอน {} UTC".format(user.name, created_at_new_timezone_time.strftime("%H:%M"))))
+                                 text=("{} เริ่มฟังตอน {} UTC".format(
+                                     user.name, created_at_new_timezone_time.strftime("%H:%M"))))
 
                 await ctx.send(embed=embed)
 
