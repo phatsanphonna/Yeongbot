@@ -13,11 +13,11 @@ import random
 import json
 from itertools import cycle
 
-# ! Load secret/bot_token.json file
+# ! Load secret/client_secret.json file
 with open('secret/client_secret.json') as client_secret:
     client_secret = json.load(client_secret)
 
-# ! Load secret/bot_token.json file
+# ! Load secret/server_secret file
 with open('secret/server_secret.json') as server_secret:
     server_secret = json.load(server_secret)
 
@@ -190,6 +190,10 @@ async def on_message(message):
     if text("เหี้ย"):
         await message.channel.send(f"เหี้ย")
 
+    # ? If user type "เงียบ"
+    if text("เงียบ"):
+        await message.channel.send(f"ก็กูอยากเงียบอ่ะ มีปัญหาหรอวะ แน่จริง 1-1 หลังเซเว่นปิดดิ {sender.mention}")
+
     # ? If user type "sundick"
     if text('sundick'):
         rd = random.randint(1, 3)
@@ -307,8 +311,11 @@ async def spotify(ctx, user: discord.Member = None):
     if user.activities:
         for activity in user.activities:
             if isinstance(activity, Spotify):
-                created_at_new_timezone_time = activity.created_at.astimezone(
+                aca_timezone_time = activity.created_at
+                aca_new_timezone_time = aca_timezone_time.astimezone(
                     timezone('Asia/Bangkok'))
+
+                spotify_icon = 'https://i.pinimg.com/originals/83/3c/f5/833cf5fe43f8c92c1fcb85a68b29e585.png'
 
                 m1, s1 = divmod(int(activity.duration.seconds), 60)
 
@@ -320,22 +327,13 @@ async def spotify(ctx, user: discord.Member = None):
                     song_length = f'{m1}:{s1}'
                     pass
 
-                ''' # ! Not used but will use soon, If possible!
-                m2, s2 = divmod(int(activity.duration.seconds), 60)
-                if s1 < 10:
-                    current_length = f'{m1}:0{s1}'
-                    pass
-                else:
-                    current_length = f'{m1}:{s1}'
-                    pass
-                '''
-
                 embed = discord.Embed(
                     title=f"น้อง {user.display_name} กำลังฟังเพลงอะไรอยู่กันนะ? :thinking:",
                     description=":musical_note: **น้อง `{}` กำลังฟัง {}**".format(
                         user.display_name,
                         f"[{activity.title}](https://open.spotify.com/track/{activity.track_id})"),
                     color=activity.color)
+                embed.set_author(name="Spotfiy", icon_url=spotify_icon)
                 embed.set_thumbnail(url=activity.album_cover_url)
                 embed.add_field(name="ชื่อเพลง", value=activity.title)
                 embed.add_field(name="ศิลปิน", value=activity.artist)
@@ -343,13 +341,9 @@ async def spotify(ctx, user: discord.Member = None):
                     name="อัลบั้ม", value=activity.album, inline=False)
                 embed.add_field(name="ระยะเวลา",
                                 value=f"{song_length}", inline=True)
-                # ////embed.add_field(name="ระยะเวลา",
-                # ////value=f"{current_length}/{song_length}", inline=True)
-                embed.set_author(name="น้องหยอง",
-                                 icon_url=AUTHOR_ICON)
                 embed.set_footer(icon_url=user.avatar_url,
                                  text=("{} เริ่มฟังตอน {} UTC".format(
-                                     user.name, created_at_new_timezone_time.strftime("%H:%M"))))
+                                     user.name, aca_new_timezone_time.strftime("%H:%M"))))
 
                 await ctx.send(embed=embed)
 
@@ -420,6 +414,7 @@ async def clock(ctx):
 # * When users use command (.send)
 @client.command()
 async def send(ctx, arg1=None):
+    # ? if arg1 is None (.send)
     if arg1 == None:
         embed_arg_none = discord.Embed(title="คำสั่งหมวด send <arg>")
         embed_arg_none.add_field(name="hug", value="ต้องการกอดหรอ?")
@@ -430,6 +425,7 @@ async def send(ctx, arg1=None):
 
         await ctx.send(embed=embed_arg_none)
 
+    # ? If arg1 != None (.send <arg>)
     else:
         embed = discord.Embed()
 
@@ -457,6 +453,7 @@ async def send(ctx, arg1=None):
         elif arg1 == 'quote':
             quote = [
                 "เห็นแดดแล้วตาหยี...",
+                "เห็นแดดแล้วตาหยี... เห็นหีแล้วตาโต",
                 "คำคมบาดใจ",
                 "แค่พี่ยักคิ้ว ต้นงิ้วก็แค่สไลด์เดอร์",
                 "พี่ไม่ได้เจ้าชู้ แต่พี่ดูแลหนูได้ทุกคน",
@@ -482,15 +479,32 @@ async def send(ctx, arg1=None):
             await ctx.send(video_rd)
             return
 
-        # ? If arg is None of the above (.send quoter)
+        # ? If arg is None of the above
+        # ! Example (.send quoter)
         else:
-            await ctx.send("พิมพ์ผิดป้ะเนี่ย!")
+            await ctx.send("พิมพ์ผิดป้ะเนี่ย! พิมพ์ให้ถูกหน่อยดิวะ")
             return
 
         await ctx.send(embed=embed)
 
 
+# * When users use command (.add)
+# TODO: Make link dump to json file
+# TODO: Make this on summer/closed semester.
+@client.command()
+async def add(ctx, arg1=None, arg2=None):
+    if arg1 == None:
+        await ctx.send('อยากเพิ่มอะไรลงในบอทหล่ะ')
+    else:
+        if arg1 == 'hug':
+            if arg2 != None:
+                hug_add = hug[arg2]
+                json.dump(hug_add, hug)
+                print('dump sucess!')
+
+
 # * When users use command (.connect <password>)
+# ! [need "ว่าที่โปรแกรมเมอร์" role]
 @client.command(aliases=['join'])
 @commands.has_role("ว่าที่โปรแกรมเมอร์")
 async def connect(ctx, password_input=None):
@@ -501,6 +515,9 @@ async def connect(ctx, password_input=None):
     if password_input == password:
         channel = ctx.author.voice.channel
         await channel.connect()
+        await ctx.author.delete_message(message)
+    else:
+        print(f'{ctx.author.name} type wrong password (.connect)')
         await ctx.author.delete_message(message)
 
 
