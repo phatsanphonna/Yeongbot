@@ -5,51 +5,48 @@ from discord import Spotify
 import time
 import datetime
 from datetime import datetime
+from itertools import cycle
 
 import pytz
 from pytz import timezone
 
 import random
 import json
-from itertools import cycle
+import praw
 
 # ! Load secret/client_secret.json file
-with open('secret/client_secret.json') as client_secret:
-    client_secret = json.load(client_secret)
+with open('secret/client_secret.json') as f:
+    client_secret = json.load(f)
 
 # ! Load secret/server_secret file
-with open('secret/server_secret.json') as server_secret:
-    server_secret = json.load(server_secret)
+with open('secret/server_secret.json') as f:
+    server_secret = json.load(f)
+
+# ! Load secret/reddit_secret file
+with open('secret/reddit_secret.json') as f:
+    reddit_secret = json.load(f)
 
 # * Import .data/client_playing.json file
-with open('.data/client_playing.json') as client_playing:
-    client_playing = json.load(client_playing)
-
-# * Import .data/hug.json file
-with open('.data/hug.json') as hug:
-    hug = json.load(hug)
-
-# * Import .data/izone.json file
-with open('.data/izone.json') as izone:
-    izone = json.load(izone)
-
-# * Import .data/malee.json file
-with open('.data/malee.json') as malee:
-    malee = json.load(malee)
-
-# * Import .data/video.json file
-with open('.data/video.json') as video:
-    video = json.load(video)
+with open('.data/client_playing.json') as f:
+    client_playing = json.load(f)
 
 # * Intents Settings
 intents = discord.Intents.all()
 
 # * Bot's Infomations
-TOKEN = client_secret['token']
-PASSWORD = client_secret['password']
+TOKEN = client_secret['client_token']
+PASSWORD = client_secret['admin_password']
 client = commands.Bot(command_prefix='.', intents=intents,
                       case_insensitive=True)
 status = cycle(client_playing)
+reddit = praw.Reddit(
+    client_id=reddit_secret['client_id'],
+    client_secret=reddit_secret['client_secret'],
+    username=reddit_secret['username'],
+    password=reddit_secret['password'],
+    user_agent=reddit_secret['user_agent'],
+    check_for_async=False
+)
 
 # * Remove Commands
 client.remove_command('help')
@@ -181,53 +178,71 @@ async def on_message(message):
     if client.user.mentioned_in(message):
         await message.channel.send(f"น้อง {sender.display_name} เรียกน้องหยองหรอคะ?\n"
                                    + "สามารถเรียกน้องหยองได้โดยพิมพ์ .help ในช่องแชทเลย")
+        return
 
     # ? When users type "ควย"
-    if text('ควย'):
-        await message.channel.send("เป็นเหี้ยอะไรหล่ะ")
+    kuy = ['kuy', 'ควย']
+    for kuy in kuy:
+        if kuy in message.content.lower():
+            await message.channel.send("เป็นเหี้ยอะไรหล่ะ")
+            return
 
     # ? If user type "เหี้ย"
-    if text("เหี้ย"):
-        await message.channel.send(f"เหี้ย")
+    here = ['เชี่ย', 'เหี้ย', 'here']
+    for here in here:
+        if here in message.content.lower():
+            here_msg = [
+                'มีปัญหาหรอสัส!',
+                'เป็นควยไรหล่ะ',
+                'อยากมีปัญหาหรอวะ'
+            ]
+            rd = random.choice(here_msg)
+
+            await message.channel.send(f'{rd}')
+            return
 
     # ? If user type "เงียบ"
-    if text("เงียบ"):
+    if 'เงียบ' in message.content.lower():
         await message.channel.send(f"ก็กูอยากเงียบอ่ะ มีปัญหาหรอวะ แน่จริง 1-1 หลังเซเว่นปิดดิ {sender.mention}")
+        return
 
     # ? If user type "sundick"
-    if text('sundick'):
-        rd = random.randint(1, 3)
+    sundick = ['sundick', 'ซันดิ้ก']
+    for sundick in sundick:
+        if sundick in message.content.lower():
+            rd = random.randint(1, 3)
 
-        if rd < 3:
-            counting = int()
-            crit_rd = random.randint(1, 4)
+            if rd < 3:
+                counting = int()
+                crit_rd = random.randint(1, 4)
 
-            await sender.edit(mute=True, deafen=True)
+                await sender.edit(mute=True, deafen=True)
 
-            if crit_rd == 1:
-                timer = int(12)
-                pass
-            else:
-                timer = int(6)
-                pass
+                if crit_rd == 1:
+                    timer = int(12)
+                    pass
+                else:
+                    timer = int(6)
+                    pass
 
-            if timer == 6:
-                await message.channel.send(f"น้อง {sender.display_name} โดนปิดไมค์ไป `{timer}` วินาที")
-            else:
-                await message.channel.send(f":crossed_swords: `ติดคริติคอล` **200%**\n"
-                                           + f"น้อง {sender.display_name} โดนปิดไมค์ไป `{timer}` วินาที")
+                if timer == 6:
+                    await message.channel.send(f"น้อง {sender.display_name} โดนปิดไมค์ไป `{timer}` วินาที")
+                else:
+                    await message.channel.send(f":crossed_swords: `ติดคริติคอล` **200%**\n"
+                                               + f"น้อง {sender.display_name} โดนปิดไมค์ไป `{timer}` วินาที")
 
-            for countdown in range(timer):
-                counting += countdown
-                time.sleep(1)
+                for countdown in range(timer):
+                    counting += countdown
+                    time.sleep(1)
 
-                while counting >= timer:
-                    await sender.edit(mute=False, deafen=False)
-                    break
+                    while counting >= timer:
+                        await sender.edit(mute=False, deafen=False)
+                        break
 
-        elif rd == 3:
-            await message.channel.send(f"น้อง {sender.mention} โชคดีที่ไม่โดนปิดไมค์ไปนะ "
-                                       + "แต่ครั้งหน้าก็ระวังไว้ด้วยละกันหล่ะ")
+            elif rd == 3:
+                await message.channel.send(f"น้อง {sender.mention} โชคดีที่ไม่โดนปิดไมค์ไปนะ "
+                                           + "แต่ครั้งหน้าก็ระวังไว้ด้วยละกันหล่ะ")
+            return
 
     await client.process_commands(message)
 
@@ -283,7 +298,7 @@ async def whois(ctx, member: discord.Member):
                          text="ขอดูประวัติโดย {}".format(ctx.author.name))
         embed.set_thumbnail(url=member.avatar_url)
 
-    else:
+    elif member == client.user:
         embed = discord.Embed(
             title="รายละเอียดของน้องหยอง",
             color=0xd9598c)
@@ -377,6 +392,8 @@ async def call(ctx, user: discord.Member = None):
 # * When users uses command (.ping)
 @client.command()
 async def ping(ctx):
+    await ctx.send('*Pinging...*')
+    time.sleep(1)
     await ctx.send(f":ping_pong: {round(client.latency * 1000)}ms")
 
 
@@ -431,12 +448,22 @@ async def send(ctx, arg1=None):
 
         # ? If arg1 is hug (.send hug)
         if arg1 == 'hug':
+            # * Import .data/hug.json file
+            with open('.data/hug.json') as f:
+                hug = json.load(f)
+
             hug_rd = random.choice(hug)
+
             embed.set_image(url=hug_rd)
 
         # ? If arg is izone (.send izone)
         elif arg1 == 'izone':
+            # * Import .data/izone.json file
+            with open('.data/izone.json') as f:
+                izone = json.load(f)
+
             izone_rd = random.choice(izone)
+
             embed.set_image(url=izone_rd)
 
         # ? If arg is nude (.send nude)
@@ -446,7 +473,12 @@ async def send(ctx, arg1=None):
 
         # ? If arg is malee (.send malee)
         elif arg1 == 'malee':
+            # * Import .data/malee.json file
+            with open('.data/malee.json') as f:
+                malee = json.load(f)
+
             malee_rd = random.choice(malee)
+
             embed.set_image(url=malee_rd)
 
         # ? If arg is quote (.send quote)
@@ -467,6 +499,7 @@ async def send(ctx, arg1=None):
                 "พี่จะยืนกดเงินตรงนี้อีกนานไหม ผมก็มีธุระเหมือนกัน~",
                 "ลุงจะดำรงตำแหน่งนายกอีกนานไหม ชาวบ้านเขาก็เดือดร้อนเหมือนกัน~"
             ]
+
             quote_rd = random.choice(quote)
 
             await ctx.send(f'> *{quote_rd}*')
@@ -474,6 +507,10 @@ async def send(ctx, arg1=None):
 
         # ? If arg is video (.send video)
         elif arg1 == 'video':
+            # * Import .data/video.json file
+            with open('.data/video.json') as f:
+                video = json.load(f)
+
             video_rd = random.choice(video)
 
             await ctx.send(video_rd)
@@ -488,6 +525,7 @@ async def send(ctx, arg1=None):
         await ctx.send(embed=embed)
 
 
+'''
 # * When users use command (.add)
 # TODO: Make link dump to json file
 # TODO: Make this on summer/closed semester.
@@ -498,9 +536,11 @@ async def add(ctx, arg1=None, arg2=None):
     else:
         if arg1 == 'hug':
             if arg2 != None:
-                hug_add = hug[arg2]
-                json.dump(hug_add, hug)
+                with open('.data/hug.json', 'w') as f:
+                    hug = json.load(f)
+                json.dumps(arg2, hug)
                 print('dump sucess!')
+'''
 
 
 # * When users use command (.connect <password>)
@@ -519,6 +559,17 @@ async def connect(ctx, password_input=None):
     else:
         print(f'{ctx.author.name} type wrong password (.connect)')
         await ctx.author.delete_message(message)
+
+
+# * When users use command (.reddit <args>)
+@client.command()
+async def sendreddit(ctx, arg=None):
+    for submission in reddit.subreddit(arg).new(limit=2):
+        embed = discord.Embed(
+            title=submission.title,
+            description=submission.url)
+        embed.set_image(url=submission.url)
+        await ctx.send(embed=embed)
 
 
 # ! Run / Required Token to run
