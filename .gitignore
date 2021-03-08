@@ -132,6 +132,4 @@ dmypy.json
 secret/
 
 # Other Files
-getbot.py
-nhentai.py
 test.py
