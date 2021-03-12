@@ -66,8 +66,8 @@ client.remove_command('help')
 AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
 
 # * Server's Infomations
-GUILD_ID = os.environ['GUILD_ID']
-CHANNEL_ID = os.environ['CHANNEL_ID']
+GUILD_ID = 545170933254717450
+CHANNEL_ID = 562590723875143680
 
 on_ready_time = datetime.now()
 tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
