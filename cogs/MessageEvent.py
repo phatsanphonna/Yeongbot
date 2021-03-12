@@ -140,7 +140,7 @@ class MessageEvent(commands.Cog):
             if sleep in message.content.lower():
                 await message.channel.send('ไปนอนสิ')
 
-                msg = await client.wait_for(
+                msg = await self.client.wait_for(
                     'message',
                     check=lambda channel: message.channel == message.channel
                 )

@@ -18,7 +18,7 @@ class ServerManagement(commands.Cog):
 
                 await ctx.send('Are you sure to delete 25 messages? (Y/N)')
 
-                msg = await client.wait_for(
+                msg = await self.client.wait_for(
                     'message',
                     check=lambda message: message.content.lower(
                     ) == 'y' and ctx.channel == message.channel
@@ -29,7 +29,7 @@ class ServerManagement(commands.Cog):
 
                 await ctx.send(f'Are you sure to delete {number-3} message? (Y/N)')
 
-                msg = await client.wait_for(
+                msg = await self.client.wait_for(
                     'message',
                     check=lambda message: message.content.lower(
                     ) == 'y' and message.channel == ctx.channel

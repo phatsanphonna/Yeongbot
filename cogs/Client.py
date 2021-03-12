@@ -21,22 +21,13 @@ class Client(commands.Cog):
     def __init__(self, client):
         self.client = client
 
-    # * Change status of client
-    @tasks.loop(seconds=180, reconnect=True)
-    async def change_status(self):
-        await self.client.change_presence(
-            status=discord.Status.online,
-            activity=discord.Activity(
-                type=discord.ActivityType.listening,
-                name=next(status)))
-                
     # * When client is online!
     @commands.Cog.listener()
     async def on_ready(self):
         guild = self.client.get_guild(GUILD_ID)
         channel = guild.get_channel(CHANNEL_ID)
 
-        change_status.start()
+        self.change_stats.start()
         print('Client is online!')
         print(on_ready_time.strftime("%d/%m/%Y, %H:%M:%S"))
 
@@ -49,6 +40,15 @@ class Client(commands.Cog):
         )
         await channel.send(embed=embed)
 
+    # * Change status of client
+    @tasks.loop(seconds=180, reconnect=True)
+    async def change_status(self):
+        await self.client.change_presence(
+            status=discord.Status.online,
+            activity=discord.Activity(
+                type=discord.ActivityType.listening,
+                name=next(status)))
+                
     # * When client joined the server.
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
