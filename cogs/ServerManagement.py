@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import asyncio
+import os
 
 PASSWORD = os.environ['admin_password']
 
