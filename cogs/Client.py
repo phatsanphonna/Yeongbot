@@ -23,7 +23,7 @@ class Client(commands.Cog):
     # * When client is online!
     @commands.Cog.listener()
     async def on_ready(self):
-        guild = client.get_guild(GUILD_ID)
+        guild = self.client.get_guild(GUILD_ID)
         channel = guild.get_channel(CHANNEL_ID)
 
         change_status.start()

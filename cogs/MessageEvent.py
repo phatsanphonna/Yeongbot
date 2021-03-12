@@ -26,7 +26,7 @@ class MessageEvent(commands.Cog):
         sender = message.author
 
         # ? Check is sender = client?
-        if sender == client.user:
+        if sender == self.client.user:
             return
 
         # ? When users mention the client.
