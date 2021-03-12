@@ -12,7 +12,7 @@ AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
 
 class MembersEvent(commands.Cog):
     def __init__(self, client):
-        client = self.client
+        self.client = client
 
     # * When users joined the server.
     @commands.Cog.listener()

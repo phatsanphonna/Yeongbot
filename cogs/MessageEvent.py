@@ -19,7 +19,7 @@ CRIT_MULTIPLY_RATE1, CRIT_MULTIPLY_RATE2 = 1, 2
 
 class MessageEvent(commands.Cog):
     def __init__(self, client):
-        client = self.client
+        self.client = client
 
     @commands.Cog.listener()
     async def on_message(self, message):
