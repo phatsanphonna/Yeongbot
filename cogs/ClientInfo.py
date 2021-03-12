@@ -1,17 +1,21 @@
 import discord
 from discord.ext import commands
-from datetime import datetime
+from datetime import datetime, timedelta
 from pytz import timezone
 
+CRIT_RATE = 33
+CRIT2X_RATE = 35
+
+AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
+
+tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
+on_ready_time = datetime.now() + tz_bangkok
 
 class ClientInfo(commands.Cog):
-    def __init__(self, client, AUTHOR_ICON, on_ready_time, tz_bangkok, CRIT_RATE, CRIT2X_RATE):
+    def __init__(self, client, AUTHOR_ICON, on_ready_time, tz_bangkok):
         self.client = client
-        self.AUTHOR_ICON = AUTHOR_ICON
         self.on_ready_time = on_ready_time
         self.tz_bangkok = tz_bangkok
-        self.CRIT_RATE = CRIT_RATE
-        self.CRIT2X_RATE = CRIT2X_RATE
 
     # * When users uses command (.help)
     @commands.command()

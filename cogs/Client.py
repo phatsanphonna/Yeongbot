@@ -1,20 +1,23 @@
 import discord
 from discord.ext import commands, tasks
-
 import json
+from datetime import datetime, timedelta
+from itertools import cycle
 
 # * Import assets/client_playing.json file
 with open('assets/client_playing.json') as f:
     client_playing = json.load(f)
 
+status = cycle(client_playing)
+tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
+on_ready_time = datetime.now() + tz_bangkok
+
+GUILD_ID = int(os.environ['GUILD_ID'])
+CHANNEL_ID = int(os.environ['CHANNEL_ID'])
 
 class Client(commands.Cog):
-    def __init__(self, client, status, on_ready_time, GUILD_ID, CHANNEL_ID):
+    def __init__(self, client):
         self.client = client
-        self.status = status
-        self.on_ready_time = on_ready_time
-        self.GUILD_ID = GUILD_ID
-        self.CHANNEL_ID = CHANNEL_ID
 
     # * When client is online!
     @commands.Cog.listener()

@@ -2,11 +2,11 @@ import discord
 from discord.ext import commands
 import asyncio
 
+PASSWORD = os.environ['admin_password']
 
 class ServerManagement(commands.Cog):
     def __init__(self, client, PASSWORD):
         self.client = client
-        self.PASSWORD = PASSWORD
 
     # * When users use command (.clear)
     @commands.command()

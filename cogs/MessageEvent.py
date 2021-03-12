@@ -13,14 +13,13 @@ linebot_headers = {
     'Authorization': 'Bearer '+linebot_token
 }
 
+CRIT_RATE = 33
+CRIT2X_RATE = 35
+CRIT_MULTIPLY_RATE1, CRIT_MULTIPLY_RATE2 = 1, 2
 
 class MessageEvent(commands.Cog):
-    def __init__(self, client, CRIT_RATE, CRIT2X_RATE, CRIT_MULTIPLY_RATE1, CRIT_MULTIPLY_RATE2):
+    def __init__(self, client):
         self.client = client
-        self.CRIT_RATE = CRIT_RATE
-        self.CRIT2X_RATE = CRIT2X_RATE
-        self.CRIT_MULTIPLY_RATE1 = CRIT_MULTIPLY_RATE1
-        self.CRIT_MULTIPLY_RATE2 = CRIT_MULTIPLY_RATE2
 
     @commands.Cog.listener()
     async def on_message(self, message):

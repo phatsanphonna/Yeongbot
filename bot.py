@@ -24,7 +24,6 @@ client = commands.Bot(
     intents=intents,
     case_insensitive=True
 )
-status = cycle(client_playing)
 
 # * Client critical rate
 CRIT_RATE = 33
