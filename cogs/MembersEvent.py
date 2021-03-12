@@ -4,13 +4,14 @@ from datetime import datetime
 from pytz import timezone
 import random
 
+GUILD_ID = int(os.environ['GUILD_ID'])
+CHANNEL_ID = int(os.environ['CHANNEL_ID'])
+AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
+
 
 class MembersEvent(commands.Cog):
-    def __init__(self, client, GUILD_ID, CHANNEL_ID, AUTHOR_ICON):
+    def __init__(self, client):
         self.client = client
-        self.GUILD_ID = GUILD_ID
-        self.CHANNEL_ID = CHANNEL_ID
-        self.AUTHOR_ICON = AUTHOR_ICON
 
     # * When users joined the server.
     @commands.Cog.listener()
@@ -99,7 +100,7 @@ class MembersEvent(commands.Cog):
         await client.wait_until_ready()
 
         await channel.send(embed=embed)
-    
+
     # * When user use command (.call)
     # TODO: User can multiple call in one command
     @commands.command()
