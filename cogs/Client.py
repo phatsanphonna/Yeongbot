@@ -17,16 +17,6 @@ GUILD_ID = int(os.environ['GUILD_ID'])
 CHANNEL_ID = int(os.environ['CHANNEL_ID'])
 
 
-# * Change status of client
-@tasks.loop(seconds=180, reconnect=True)
-async def change_status():
-    await self.client.change_presence(
-        status=discord.Status.online,
-        activity=discord.Activity(
-            type=discord.ActivityType.listening,
-            name=next(status)))
-
-
 class Client(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -50,6 +40,15 @@ class Client(commands.Cog):
         )
         await channel.send(embed=embed)
 
+    # * Change status of client
+    @tasks.loop(seconds=180, reconnect=True)
+    async def change_status(self):
+        await self.client.change_presence(
+            status=discord.Status.online,
+            activity=discord.Activity(
+                type=discord.ActivityType.listening,
+                name=next(status)))
+                
     # * When client joined the server.
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
