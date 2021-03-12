@@ -17,18 +17,19 @@ GUILD_ID = int(os.environ['GUILD_ID'])
 CHANNEL_ID = int(os.environ['CHANNEL_ID'])
 
 
+# * Change status of client
+@tasks.loop(seconds=180, reconnect=True)
+async def change_status(self):
+    await client.change_presence(
+        status=discord.Status.online,
+        activity=discord.Activity(
+            type=discord.ActivityType.listening,
+            name=next(status)))
+
+
 class Client(commands.Cog):
     def __init__(self, client):
         self.client = client
-
-    # * Change status of client
-        @tasks.loop(seconds=180, reconnect=True)
-        async def change_status(self):
-            await client.change_presence(
-                status=discord.Status.online,
-                activity=discord.Activity(
-                    type=discord.ActivityType.listening,
-                    name=next(status)))
 
     # * When client is online!
     @commands.Cog.listener()
