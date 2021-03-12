@@ -16,9 +16,19 @@ on_ready_time = datetime.now() + tz_bangkok
 GUILD_ID = int(os.environ['GUILD_ID'])
 CHANNEL_ID = int(os.environ['CHANNEL_ID'])
 
+
 class Client(commands.Cog):
     def __init__(self, client):
         self.client = client
+
+    # * Change status of client
+        @tasks.loop(seconds=180, reconnect=True)
+        async def change_status(self):
+            await client.change_presence(
+                status=discord.Status.online,
+                activity=discord.Activity(
+                    type=discord.ActivityType.listening,
+                    name=next(status)))
 
     # * When client is online!
     @commands.Cog.listener()
@@ -38,15 +48,6 @@ class Client(commands.Cog):
             color=0xff0033
         )
         await channel.send(embed=embed)
-
-    # * Change status of client
-    @tasks.loop(seconds=180, reconnect=True)
-    async def change_status(self):
-        await client.change_presence(
-            status=discord.Status.online,
-            activity=discord.Activity(
-                type=discord.ActivityType.listening,
-                name=next(status)))
 
     # * When client joined the server.
     @commands.Cog.listener()
