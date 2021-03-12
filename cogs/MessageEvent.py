@@ -157,8 +157,6 @@ class MessageEvent(commands.Cog):
                         await message.channel.send('ทำไมไม่ไปนอนหล่ะ บอกให้ไปนอนไง!')
                         break
 
-        await self.client.process_commands(message)
-
 
 def setup(client):
     client.add_cog(MessageEvent(client))
