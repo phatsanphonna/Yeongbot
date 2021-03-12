@@ -20,7 +20,7 @@ CHANNEL_ID = int(os.environ['CHANNEL_ID'])
 # * Change status of client
 @tasks.loop(seconds=180, reconnect=True)
 async def change_status():
-    await client.change_presence(
+    await self.client.change_presence(
         status=discord.Status.online,
         activity=discord.Activity(
             type=discord.ActivityType.listening,
