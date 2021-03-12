@@ -30,7 +30,7 @@ class MessageEvent(commands.Cog):
             return
 
         # ? When users mention the client.
-        if client.user.mentioned_in(message):
+        if self.client.user.mentioned_in(message):
             await message.channel.send(
                 f"น้อง {sender.display_name} เรียกน้องหยองหรอคะ?\n"
                 + "สามารถเรียกน้องหยองได้โดยพิมพ์ .help ในช่องแชทเลย"
@@ -157,7 +157,7 @@ class MessageEvent(commands.Cog):
                         await message.channel.send('ทำไมไม่ไปนอนหล่ะ บอกให้ไปนอนไง!')
                         break
 
-        await client.process_commands(message)
+        await self.client.process_commands(message)
 
 
 def setup(client):
