@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from datetime import datetime
 from pytz import timezone
+import random
 
 
 class MembersEvent(commands.Cog):
@@ -102,7 +103,7 @@ class MembersEvent(commands.Cog):
     # * When user use command (.call)
     # TODO: User can multiple call in one command
     @commands.command()
-    async def call(ctx, user: discord.Member = None):
+    async def call(self, ctx, user: discord.Member = None):
         if user == None:  # ? user = None (.call)
             await ctx.send("ถ้าต้องการเรียกใครมาตอบให้พิม .call <username> นะคะ")
 

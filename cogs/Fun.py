@@ -6,11 +6,11 @@ from datetime import datetime
 import random
 import json
 
+tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
 
 class Fun(commands.Cog):
-    def __init__(self, client, tz_bangkok):
+    def __init__(self, client):
         self.client = client
-        self.tz_bangkok = tz_bangkok
 
     # * When users use command (.guessnumber)
     @commands.command()
