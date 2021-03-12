@@ -6,7 +6,7 @@ import os
 PASSWORD = os.environ['admin_password']
 
 class ServerManagement(commands.Cog):
-    def __init__(self, client, PASSWORD):
+    def __init__(self, client):
         self.client = client
 
     # * When users use command (.clear)
