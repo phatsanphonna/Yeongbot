@@ -12,10 +12,11 @@ from pytz import timezone
 
 import random
 import json
-import praw
 import asyncio
 import requests
+import os
 
+'''
 # ! Load secret/client_secret.json file
 with open('secret/client_secret.json') as f:
     client_secret = json.load(f)
@@ -24,45 +25,35 @@ with open('secret/client_secret.json') as f:
 with open('secret/server_secret.json') as f:
     server_secret = json.load(f)
 
-# ! Load secret/reddit_secret.json file
-with open('secret/reddit_secret.json') as f:
-    reddit_secret = json.load(f)
-
 # ! Load secret/line_secret.json file
 with open('secret/line_secret.json') as f:
     line_secret = json.load(f)
+'''
 
 # * Import assets/client_playing.json file
 with open('assets/client_playing.json') as f:
     client_playing = json.load(f)
 
+
 # * Intents Settings
 intents = discord.Intents.all()
 
 # * Bot's Infomations
-TOKEN = client_secret['client_token']
-PASSWORD = client_secret['admin_password']
+TOKEN = os.environ['client_token']
+PASSWORD = os.environ['admin_password']
 client = commands.Bot(
     command_prefix='.',
     intents=intents,
     case_insensitive=True
 )
 status = cycle(client_playing)
-reddit = praw.Reddit(
-    client_id=reddit_secret['client_id'],
-    client_secret=reddit_secret['client_secret'],
-    username=reddit_secret['username'],
-    password=reddit_secret['password'],
-    user_agent=reddit_secret['user_agent'],
-    check_for_async=False
-)
 CRIT_RATE = 33
 CRIT2X_RATE = 35
 CRIT_MULTIPLY_RATE1, CRIT_MULTIPLY_RATE2 = 1, 2
 
 # * lINE Bot Notifications
 linebot_url = 'https://notify-api.line.me/api/notify'
-linebot_token = line_secret['line_token']
+linebot_token = os.environ['line_token']
 linebot_headers = {
     'content-type': 'application/x-www-form-urlencoded',
     'Authorization': 'Bearer '+linebot_token
@@ -75,12 +66,11 @@ client.remove_command('help')
 AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
 
 # * Server's Infomations
-GUILD_ID = server_secret['GUILD_ID']
-CHANNEL_ID = server_secret['CHANNEL_ID']
+GUILD_ID = os.environ['GUILD_ID']
+CHANNEL_ID = os.environ['CHANNEL_ID']
 
-current_timezone_time = datetime.now()
-on_ready_time = current_timezone_time.astimezone(
-    timezone('Asia/Bangkok'))
+on_ready_time = datetime.now()
+tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
 
 
 # * When bot is online
@@ -142,8 +132,8 @@ async def on_member_join(member):
     embed_dm = discord.Embed(
         title="อันยองจ้า!",
         description=(
-            f"นี่คือร้านโกโก้ของน้องซันเองจ้าาา\n"
-            + f"ถ้าอยากให้น้องหยองช่วยอะไรก็พิมพ์ .help ได้เลยนร้าาาาา"
+            f"นี่คือร้านโกโก้ของน้องซันเองจ้าาา\n\
+            ถ้าอยากให้น้องหยองช่วยอะไรก็พิมพ์ .help ได้เลยนร้าาาาา"
         ),
         color=0xd9598c
     )
@@ -223,21 +213,22 @@ async def on_message(message):
 
     # ? When users mention the client.
     if client.user.mentioned_in(message):
-        if message.content.lower().startswith('.whois'):
-            return
-        else:
-            await message.channel.send(
-                f"น้อง {sender.display_name} เรียกน้องหยองหรอคะ?\n"
-                + "สามารถเรียกน้องหยองได้โดยพิมพ์ .help ในช่องแชทเลย"
-            )
-            return
-        return
+        await message.channel.send(
+            f"น้อง {sender.display_name} เรียกน้องหยองหรอคะ?\n"
+            + "สามารถเรียกน้องหยองได้โดยพิมพ์ .help ในช่องแชทเลย"
+        )
 
-    if message.author.guild.owner.mentioned_in(message):
-        msg = f'{message.author.name} has mention you on {message.guild.name}, {message.channel.name}'
-        r = requests.post(linebot_url, headers=linebot_headers,
-                          data={'message': msg})
-        print(r.text)
+    # ? When users mention the guild owner.
+    if message.guild:
+        if sender.guild.owner.mentioned_in(message):
+            if sender.bot:
+                return
+            else:
+                msg = f'{sender.name} has mention you on {message.guild.name}, {message.channel.name}'
+                r = requests.post(linebot_url, headers=linebot_headers,
+                                  data={'message': msg})
+                print('LINE Pinging:', r.text)
+                return
 
     # ? When users type "ควย"
     kuy = ['kuy', 'ควย']
@@ -326,25 +317,33 @@ async def on_message(message):
                     + "แต่ครั้งหน้าก็ระวังไว้ด้วยละกันหล่ะ"
                 )
             return
+    sleep = ['ง่วง', 'อยากนอน']
+    for sleep in sleep:
+        if sleep in message.content.lower():
+            await message.channel.send('ไปนอนสิ')
 
-    if message.content.startswith('ง่วง'):
-        channel = message.channel
-        await channel.send('ไปนอนสิ')
+            msg = await client.wait_for(
+                'message',
+                check=lambda channel: message.channel == message.channel
+            )
 
-        def sleep_no(message):
-            return message.content.lower() == 'ไม่' and message.channel == channel
+            yes = ['ได้', 'โอเค', 'ด้าย', 'yes']
+            for yes in yes:
+                if yes in msg.content.lower():
+                    await message.channel.send('Good Job!')
+                    break
 
-        def sleep_yes(message):
-            return message.content.lower() == 'ใช่' and message.channel == channel
-
-        msg = await client.wait_for('message')
-
-        await message.channel.send('Good Job!')
+            no = ['ไม่', 'no']
+            for no in no:
+                if no in msg.content.lower():
+                    await message.channel.send('ทำไมไม่ไปนอนหล่ะ บอกให้ไปนอนไง!')
+                    break
 
     await client.process_commands(message)
 
-
 # * When users uses command (.help)
+
+
 @client.command()
 async def help(ctx, arg=None):
     if arg == None:
@@ -365,13 +364,17 @@ async def help(ctx, arg=None):
         embed.add_field(name="ping",
                         value="ทดสอบการตอบกลับ", inline=True)  # ? (.ping)
         embed.add_field(name="info",
-                        value="แสดงรายละเอียดเกี่ยวกับบอท", inline=True)  # ? (.ping)
+                        value="แสดงรายละเอียดเกี่ยวกับบอท", inline=True)  # ? (.info)
         embed.add_field(name="hello / hi",
                         value="สวัสดีไงเพื่อนรัก", inline=True)  # ? (.hello / .hi)
         embed.add_field(name="send",
                         value="ขอให้บอทส่งอะไรสักอย่าง", inline=True)  # ? (.send <arg>)
+        embed.add_field(name="totalusers",
+                        value="ดูจำนวนสมาชิกทั้งหมดในเซิฟ", inline=True)  # ? (.totalusers)
         embed.add_field(name="mute / unmute",
                         value="ปิด/เปิดไมค์ทุกคนในห้องแชท (ยกเว้นบอท)", inline=True)  # ? (.mute / .unmute)
+        embed.add_field(name="roll",
+                        value="สุ่มตัวเลข", inline=True)  # ? (.roll)
         embed.add_field(name="color / colour",
                         value="เปลี่ยนสีของชื่อตัวเอง", inline=True)  # ? (.color / .colour)
 
@@ -389,70 +392,71 @@ async def help(ctx, arg=None):
 # * When users uses command (.info)
 @client.command()
 async def info(ctx):
+    total_restart_time = datetime.now() - on_ready_time
+
+    m, s = divmod(int(total_restart_time.seconds), 60)
+    h, m = divmod(m, 60)
+
+    if total_restart_time.days > 0:
+        d = total_restart_time.days
+    else:
+        d = 0
+
     embed = discord.Embed(
         title='รายละเอียดของบอท',
         color=0xFCF694
     )
     embed.add_field(
         name='Last Restart',
-        value=f'Date: `{on_ready_time.strftime("%d/%m/%Y")}`\n'
-        + f'Time: `{on_ready_time.strftime("%H:%M:%S")}`'
-    )
-    embed.add_field(
-        name='Ping Time',
-        value=f'`{round(client.latency * 1000)}` ms'
+        value=f'Date: `{on_ready_time.strftime("%d/%m/%Y / %d %B %Y")}`\n\
+        Time: `{on_ready_time.strftime("%H:%M:%S")} GMT +7`\n\
+        > `{int(d)} Days, {int(h)} Hours, {int(m)} Minutes, {int(s)} Seconds`',
+        inline=False
     )
     embed.add_field(
         name='Bot Critical Rate',
-        value=f'Critical Rate: `{CRIT_RATE}`%\n'
-        + f'Critical Multiplier Rate: `{CRIT2X_RATE}`%'
+        value=f'Critical Rate: `{CRIT_RATE}`%\n\
+        Critical Multiplier Rate: `{CRIT2X_RATE}`%'
     )
+    embed.add_field(
+        name='Ping Time',
+        value=f'`{round(client.latency * 1000)}` ms')
 
     await ctx.send(embed=embed)
 
 
 # * When users uses command (.whois)
 @client.command()
-async def whois(ctx, *, member: discord.Member):
-    if member != client.user:
-        embed = discord.Embed(
-            title=f"น้อง {member.name}",
-            color=0xd9598c
-        )
-        embed.set_author(name="น้องหยอง", icon_url=AUTHOR_ICON)
-        embed.add_field(name="ชื่อ", value=member.name, inline=True)
-        embed.add_field(name="ชื่อที่แสดง",
-                        value=member.display_name, inline=True)
-        embed.add_field(name="วันที่สมัครไอดี",
-                        value='{}'.format(
-                            member.created_at.strftime("%d/%m/%Y")),
-                        inline=False)
-        embed.add_field(name="วันที่เข้ามาในร้าน",
-                        value='{}'.format(
-                            member.joined_at.strftime("%d/%m/%Y")),
-                        inline=False)
-        embed.add_field(name="ไอดี", value=member.id, inline=False)
-        embed.set_footer(icon_url=ctx.author.avatar_url,
-                         text="ขอดูประวัติโดย {}".format(ctx.author.name))
-        embed.set_thumbnail(url=member.avatar_url)
-
-    else:
-        embed = discord.Embed(
-            title="รายละเอียดของน้องหยอง",
-            color=0xd9598c)
-        embed.set_author(name="น้องหยอง", icon_url=AUTHOR_ICON)
-        embed.add_field(
-            name="คนสร้างน้องหยอง", value="Sun#6284", inline=False
-        )
-        embed.add_field(
-            name="สร้างไว้ทำอะไร ?",
-            value="ก็กูอยากสร้างอ่ะมีปัญหาอะไรไหม",
-            inline=False
-        )
-        embed.set_image(
-            url='https://thumbs.gfycat.com/PitifulSkinnyEuropeanpolecat-size_restricted.gif'
-        )
-        embed.set_thumbnail(url=client.user.avatar_url)
+async def whois(ctx, member: discord.Member):
+    embed = discord.Embed(
+        title=f"น้อง {member.name}",
+        color=0xd9598c
+    )
+    embed.set_author(name="น้องหยอง", icon_url=AUTHOR_ICON)
+    embed.add_field(name="ชื่อ", value=member.name, inline=True)
+    embed.add_field(
+        name="ชื่อที่แสดง",
+        value=member.display_name, inline=True
+    )
+    embed.add_field(
+        name="วันที่สมัครไอดี",
+        value='{}'.format(
+            member.created_at.strftime("%d/%m/%Y")),
+        inline=False
+    )
+    embed.add_field(
+        name="วันที่เข้ามาในร้าน",
+        value='{}'.format(
+            member.joined_at.strftime("%d/%m/%Y")),
+        inline=False
+    )
+    embed.add_field(name="ไอดี", value=member.id, inline=False)
+    embed.set_footer(
+        icon_url=ctx.author.avatar_url,
+        text="ขอดูประวัติโดย {}".format(ctx.author.name)
+    )
+    embed.timestamp = datetime.utcnow()
+    embed.set_thumbnail(url=member.avatar_url)
 
     await ctx.send(embed=embed)
 
@@ -469,12 +473,17 @@ async def spotify(ctx, user: discord.Member = None):
     if user.activities:
         for activity in user.activities:
             if isinstance(activity, Spotify):
-                tz_bangkok = timedelta(hours=7)
-                raw_current_length = activity.end - (datetime.now() - tz_bangkok)
+                raw_current_length = activity.end \
+                    - (datetime.now() - tz_bangkok)
                 current_length = activity.duration - raw_current_length
+                created_at = activity.created_at + tz_bangkok
 
                 spotify_icon = 'https://i.pinimg.com/originals/83/3c/f5/833cf5fe43f8c92c1fcb85a68b29e585.png'
 
+                """
+                divmod use for situation 'datetime.timedelta' has no attribute 'strftime'
+                calculate or convert time like from seconds to minutes
+                """
                 m1, s1 = divmod(int(activity.duration.seconds), 60)
                 m2, s2 = divmod(int(current_length.seconds), 60)
 
@@ -518,7 +527,7 @@ async def spotify(ctx, user: discord.Member = None):
                     text=(
                         "{} เริ่มฟังเพลงตอน {} น.".format(
                             user.name,
-                            (activity.created_at+tz_bangkok).strftime("%H:%M")
+                            created_at.strftime("%H:%M")
                         )
                     )
                 )
@@ -676,27 +685,9 @@ async def send(ctx, arg1=None):
         await ctx.send(embed=embed)
 
 
-'''
-# * When users use command (.add)
-# TODO: Make link dump to json file
-# TODO: Make this on summer/closed semester.
-@client.command()
-async def add(ctx, arg1=None, arg2=None):
-    if arg1 == None:
-        await ctx.send('อยากเพิ่มอะไรลงในบอทหล่ะ')
-    else:
-        if arg1 == 'hug':
-            if arg2 != None:
-                with open('assets/hug.json', 'w') as f:
-                    hug = json.load(f)
-                json.dumps(arg2, hug)
-                print('dump sucess!')
-'''
-
-
 # * When users use command (.list)
 @client.command()
-async def list(ctx):
+async def totalusers(ctx):
     guild = client.get_guild(ctx.author.guild.id)
 
     total = len(guild.members)
@@ -727,16 +718,16 @@ async def connect(ctx, password_input=None):
     message = ctx.message
     password = PASSWORD
 
-    if ctx.author != ctx.author.guild.owner:
+    if ctx.author is not ctx.author.guild.owner:
         return
-
-    if password_input == password:
-        channel = ctx.author.voice.channel
-        await channel.connect()
-        await message.delete_message()
     else:
-        print(f'{ctx.author.name} type wrong password (.connect)')
-        await ctx.author.delete_message(message)
+        if password_input is password:
+            channel = ctx.author.voice.channel
+            await channel.connect()
+            await message.delete_message()
+        else:
+            print(f'{ctx.author.name} type wrong password (.connect)')
+            await ctx.author.delete_message(message)
 
 
 # * When users use command (.mute)
@@ -757,7 +748,7 @@ async def mute(ctx):
 @client.command()
 async def unmute(ctx, onoff=None):
     channel = ctx.author.voice.channel
-    if onoff == None:
+    if onoff is None:
         for member in channel.members:
             await member.edit(mute=False)
         await ctx.send(f'{ctx.author.name} ได้ทำการเปิดไมค์ทุกคนในห้องแล้ว')
@@ -766,29 +757,18 @@ async def unmute(ctx, onoff=None):
         await ctx.author.edit(mute=False)
 
 
-# * When users use command (.reddit <args>)
-@client.command()
-async def sendreddit(ctx, sreddit=None):
-    for submission in reddit.subreddit(sreddit).new(limit=2):
-        embed = discord.Embed(
-            title=f'[{submission.title}]({submission.url})',
-            description=submission.url)
-        embed.set_image(url=submission.url)
-        await ctx.send(embed=embed)
-
-
 # * When users use command (.roll)
 @client.command()
 async def roll(ctx, num1: int = None, num2: int = None):
-    if num1 == None:
+    if num1 is None:
         randnum = random.randint(1, 10)
         await ctx.send(f':roller_coaster: {ctx.author.name} สุ่มได้ {randnum} แต้ม (1-10)')
 
-    elif num1 != None and num2 == None:
+    elif num1 is not None and num2 is None:
         randnum = random.randint(1, num1)
         await ctx.send(f':roller_coaster: {ctx.author.name} สุ่มได้ {randnum} แต้ม (1-{num1})')
 
-    elif num1 != None and num2 != None:
+    elif num1 is not None and num2 is not None:
         randnum = random.randint(num1, num2)
         await ctx.send(f':roller_coaster: {ctx.author.name} สุ่มได้ {randnum} แต้ม ({num1}-{num2})')
 
@@ -796,22 +776,34 @@ async def roll(ctx, num1: int = None, num2: int = None):
 # * When users use command (.role)
 @client.command(aliases=['colour'])
 async def color(ctx, *, color=None):
-    if color == None:
+    if color is None:
         embed = discord.Embed(
             title='Colors',
             description=(
-                '[pink](https://www.color-hex.com/color/d9598c "#D9598c")\n'
+                '[pink](https://www.color-hex.com/color/d9598c "#D9598c")\n'  # Pink
+                # Light Pink
                 + '[light pink](https://www.color-hex.com/color/f1d2e7 "#F1D2E7")\n'
+                # Orange
                 + '[orange](https://www.color-hex.com/color/f3aa51 "#F3AA51")\n'
+                # Yellow
                 + '[yellow](https://www.color-hex.com/color/fcf695 "#FCF695")\n'
+                # Blue
                 + '[blue](https://www.color-hex.com/color/567ace "#567ACE")\n'
+                # Light Blue
                 + '[light blue](https://www.color-hex.com/color/b7d3e9 "#B7D3E9")\n'
+                # Purple
                 + '[purple](https://www.color-hex.com/color/bbb0dc "#BBB0DC")\n'
+                # Red
                 + '[red](https://www.color-hex.com/color/d9726b "#D9726B")\n'
+                # Peach
                 + '[peach](https://www.color-hex.com/color/f1c3aa "#F1C3AA")\n'
+                # Mint
                 + '[mint](https://www.color-hex.com/color/cee5d5 "#CEE5D5")\n'
+                # White
                 + '[white](https://www.color-hex.com/color/ffffff "#FFFFFF")\n'
+                # Blue Mint
                 + '[blue mint](https://www.color-hex.com/color/a7e0e1 "#A7E0E1")\n'
+                # Black
                 + '[black](https://www.color-hex.com/color/010101 "#010101")\n'
             ),
             color=0xd9598c
@@ -838,6 +830,75 @@ async def color(ctx, *, color=None):
             )
             await asyncio.sleep(2)
             await ctx.channel.purge(limit=2)
+
+
+# * When users use command (.clear)
+@client.command()
+async def clear(ctx, number: int = None):
+    if ctx.author is ctx.guild.owner:
+        if number is None:
+            number = 25+3
+
+            await ctx.send('Are you sure to delete 25 messages? (Y/N)')
+
+            msg = await client.wait_for(
+                'message',
+                check=lambda message: message.content.lower() == 'y' and ctx.channel == message.channel
+                )
+            await ctx.channel.purge(limit=number)
+        else:
+            number += 3
+
+            await ctx.send(f'Are you sure to delete {number-3} message? (Y/N)')
+
+            msg = await client.wait_for(
+                'message',
+                check=lambda message: message.content.lower(
+                ) == 'y' and message.channel == ctx.channel
+            )
+            await ctx.channel.purge(limit=number)
+    else:
+        await ctx.send('You need to be a server owner to use this command!')
+
+
+# * When users use command (.play)
+@client.command()
+async def play(ctx, args=None):
+    if args is None:
+        random_number = random.randint(1, 20)
+        tries = 5
+
+        await ctx.send('Guessing Number from 1 to 10')
+
+        while tries != 0:
+            num = await client.wait_for(
+                'message',
+                check=lambda message: message.author is ctx.author
+            )
+            if int(num.content) > random_number:
+                tries -= 1
+                if tries == 0:
+                    await ctx.send('นายไม่มีสิทธิเดาแล้ว เสียใจด้วย')
+                    break
+                else:
+                    await ctx.send(f'ตัวเลขที่นายเดามาหน่ะ มันสูงไปนะ, นายยังสามารถเดาได้อีก `{tries}` ครั้ง')
+                    continue
+
+            elif int(num.content) < random_number:
+                tries -= 1
+                if tries == 0:
+                    await ctx.send('นายไม่มีสิทธิเดาแล้ว เสียใจด้วย')
+                    break
+                else:
+                    await ctx.send(f'ตัวเลขที่นายเดามาหน่ะ มันต่ำไปนะ, นายยังสามารถเดาได้อีก `{tries}` ครั้ง')
+                    continue
+
+            elif int(num.content) is random_number:
+                await ctx.send('ดีมาก! นายเดาตัวเลขถูกแล้ว!')
+                break
+
+        if tries == 0:
+            await ctx.send(f'ตัวเลขคือ {random_number}')
 
 
 # ! Run / Required Token to run
