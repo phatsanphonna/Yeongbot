@@ -69,8 +69,8 @@ AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
 GUILD_ID = 545170933254717450
 CHANNEL_ID = 562590723875143680
 
-on_ready_time = datetime.now()
 tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
+on_ready_time = datetime.now() + tz_bangkok
 
 
 # * When bot is online
@@ -473,10 +473,9 @@ async def spotify(ctx, user: discord.Member = None):
     if user.activities:
         for activity in user.activities:
             if isinstance(activity, Spotify):
-                raw_current_length = activity.end \
-                    - (datetime.now() - tz_bangkok)
+                raw_current_length = activity.end - datetime.now()
                 current_length = activity.duration - raw_current_length
-                created_at = activity.created_at + tz_bangkok
+                created_at = activity.created_at
 
                 spotify_icon = 'https://i.pinimg.com/originals/83/3c/f5/833cf5fe43f8c92c1fcb85a68b29e585.png'
 
@@ -843,8 +842,9 @@ async def clear(ctx, number: int = None):
 
             msg = await client.wait_for(
                 'message',
-                check=lambda message: message.content.lower() == 'y' and ctx.channel == message.channel
-                )
+                check=lambda message: message.content.lower(
+                ) == 'y' and ctx.channel == message.channel
+            )
             await ctx.channel.purge(limit=number)
         else:
             number += 3
