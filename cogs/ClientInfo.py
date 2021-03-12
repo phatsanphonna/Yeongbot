@@ -13,7 +13,7 @@ on_ready_time = datetime.now() + tz_bangkok
 
 class ClientInfo(commands.Cog):
     def __init__(self, client):
-        self.client = client
+        client = self.client
 
     # * When users uses command (.help)
     @commands.command()

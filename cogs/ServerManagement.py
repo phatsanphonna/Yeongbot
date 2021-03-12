@@ -7,7 +7,7 @@ PASSWORD = os.environ['admin_password']
 
 class ServerManagement(commands.Cog):
     def __init__(self, client):
-        self.client = client
+        client = self.client
 
     # * When users use command (.clear)
     @commands.command()
