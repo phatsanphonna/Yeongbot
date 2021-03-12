@@ -3,6 +3,7 @@ from discord.ext import commands, tasks
 import json
 from datetime import datetime, timedelta
 from itertools import cycle
+import os
 
 # * Import assets/client_playing.json file
 with open('assets/client_playing.json') as f:

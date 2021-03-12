@@ -12,10 +12,8 @@ tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
 on_ready_time = datetime.now() + tz_bangkok
 
 class ClientInfo(commands.Cog):
-    def __init__(self, client, AUTHOR_ICON, on_ready_time, tz_bangkok):
+    def __init__(self, client):
         self.client = client
-        self.on_ready_time = on_ready_time
-        self.tz_bangkok = tz_bangkok
 
     # * When users uses command (.help)
     @commands.command()

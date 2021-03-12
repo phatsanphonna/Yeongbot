@@ -3,6 +3,7 @@ from discord.ext import commands
 from datetime import datetime
 from pytz import timezone
 import random
+import os
 
 GUILD_ID = int(os.environ['GUILD_ID'])
 CHANNEL_ID = int(os.environ['CHANNEL_ID'])
