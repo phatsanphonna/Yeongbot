@@ -20,6 +20,7 @@ CHANNEL_ID = int(os.environ['CHANNEL_ID'])
 class Client(commands.Cog):
     def __init__(self, client):
         self.client = client
+        self.change_status.start()
 
     # * When client is online!
     @commands.Cog.listener()
