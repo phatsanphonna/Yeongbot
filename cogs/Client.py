@@ -27,7 +27,7 @@ class Client(commands.Cog):
         guild = self.client.get_guild(GUILD_ID)
         channel = guild.get_channel(CHANNEL_ID)
 
-        self.change_stats.start()
+        change_stats.start(self)
         print('Client is online!')
         print(on_ready_time.strftime("%d/%m/%Y, %H:%M:%S"))
 
@@ -48,7 +48,7 @@ class Client(commands.Cog):
             activity=discord.Activity(
                 type=discord.ActivityType.listening,
                 name=next(status)))
-                
+
     # * When client joined the server.
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
