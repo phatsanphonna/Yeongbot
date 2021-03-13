@@ -126,7 +126,7 @@ class ServerManagement(commands.Cog):
     # * When users use command (.totalusers)
     @commands.command()
     async def totalusers(self, ctx):
-        guild = client.get_guild(ctx.author.guild.id)
+        guild = self.client.get_guild(ctx.author.guild.id)
 
         total = len(guild.members)
         bot_total = 0
