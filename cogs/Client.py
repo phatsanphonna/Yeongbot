@@ -27,7 +27,7 @@ class Client(commands.Cog):
         guild = self.client.get_guild(GUILD_ID)
         channel = guild.get_channel(CHANNEL_ID)
 
-        change_stats.start(self)
+        change_status.start(self)
         print('Client is online!')
         print(on_ready_time.strftime("%d/%m/%Y, %H:%M:%S"))
 
