@@ -236,7 +236,7 @@ class Fun(commands.Cog):
         await ctx.send(f'> *{quote_rd}*')
 
     # ? If sub-command is video (.send video)
-    @send.geoup()
+    @send.group()
     async def video(self, ctx):
         # * Import assets/video.json file
         with open('assets/video.json') as f:
