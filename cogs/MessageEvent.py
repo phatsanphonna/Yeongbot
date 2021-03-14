@@ -38,7 +38,7 @@ class MessageEvent(commands.Cog):
 
         # ? When users mention the guild owner.
         if message.guild:
-            if self.sender.guild.owner.mentioned_in(message):
+            if self.message.guild.owner.mentioned_in(message):
                 if sender.bot:
                     return
                 else:
