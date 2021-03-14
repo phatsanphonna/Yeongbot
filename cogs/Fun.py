@@ -158,7 +158,7 @@ class Fun(commands.Cog):
             await ctx.send(f'ดูเหมือนว่า {user.name} จะไม่ได้ทำอะไรอยู่นะ')
 
     # * When users use command (.send)
-    @commands.group(invoke_without_command-True)
+    @commands.group(invoke_without_command=True)
     async def send(self, ctx):
         embed = discord.Embed(title="คำสั่งหมวด send <arg>")
 
