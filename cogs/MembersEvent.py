@@ -17,7 +17,7 @@ class MembersEvent(commands.Cog):
     # * When users joined the server.
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        guild = client.get_guild(GUILD_ID)
+        guild = self.client.get_guild(GUILD_ID)
         channel = guild.get_channel(CHANNEL_ID)
         role = discord.utils.get(member.guild.roles, name="Citizen")
 
@@ -75,7 +75,7 @@ class MembersEvent(commands.Cog):
     @commands.Cog.listener()
     async def on_member_remove(self, member):
         # * guild and channel Infomations
-        guild = client.get_guild(GUILD_ID)
+        guild = self.client.get_guild(GUILD_ID)
         channel = guild.get_channel(CHANNEL_ID)
 
         # * datetime Infomations
