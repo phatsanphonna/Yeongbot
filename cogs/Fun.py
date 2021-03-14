@@ -21,7 +21,7 @@ class Fun(commands.Cog):
         await ctx.send('Guessing Number from 1 to 10')
 
         while tries != 0:
-            num = await client.wait_for(
+            num = await self.client.wait_for(
                 'message',
                 check=lambda message: message.author is ctx.author
             )
