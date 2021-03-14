@@ -25,7 +25,7 @@ class ClientReady(commands.Cog):
         guild = self.client.get_guild(GUILD_ID)
         channel = guild.get_channel(CHANNEL_ID)
 
-        print('Client is online!', self.client.name)
+        print('Client is online!')
         print(on_ready_time.strftime("%d/%m/%Y, %H:%M:%S"))
 
         embed = discord.Embed(
