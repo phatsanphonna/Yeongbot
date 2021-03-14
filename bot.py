@@ -74,6 +74,7 @@ async def reload(ctx, all_cogs=None):
                 if filename.endswith('.py'):
                     client.unload_extension(f'cogs.{filename[:-3]}')
                     client.load_extension(f'cogs.{filename[:-3]}')
+
                     print(f'cogs.{filename[:-3]} reloaded!')
         else:
             if all_cogs.endswith('.py'):
@@ -87,13 +88,11 @@ async def reload(ctx, all_cogs=None):
     else:
         await ctx.send('You need to be a server owner to use this command!')
 
+# ! Load all Cogs file
+for filename in os.listdir('./cogs'):
+    if filename.endswith('.py'):
+        client.load_extension(f'cogs.{filename[:-3]}')
 
-if __name__ == '__main__':
-    # ! Load all Cogs file
-    for filename in os.listdir('./cogs'):
-        if filename.endswith('.py'):
-            client.load_extension(f'cogs.{filename[:-3]}')
 
-    
 # ! Run / Required Token to run
 client.run(TOKEN)

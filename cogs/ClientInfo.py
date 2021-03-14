@@ -74,6 +74,7 @@ class ClientInfo(commands.Cog):
     @help.group()
     async def magicball(self, ctx):
         await ctx.send('ลูกแก้ววิเศษจงบอกข้าเถิด ใครงามเลิศในปัตตานี...')
+    
     # * When users uses command (.info)
     @commands.command()
     async def info(self, ctx):
