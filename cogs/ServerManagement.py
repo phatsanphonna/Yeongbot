@@ -115,6 +115,7 @@ class ServerManagement(commands.Cog):
     @commands.command()
     async def unmute(self, ctx, onoff=None):
         channel = ctx.author.voice.channel
+        
         if onoff is None:
             for member in channel.members:
                 await member.edit(mute=False)

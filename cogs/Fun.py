@@ -8,12 +8,13 @@ import json
 
 tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
 
+
 class Fun(commands.Cog):
     def __init__(self, client):
         self.client = client
 
     # * When users use command (.guessnumber)
-    @commands.command()
+    @commands.command(aliases=['guessnumbers', 'gn'])
     async def guessnumber(self, ctx):
         random_number = random.randint(1, 20)
         tries = 5
@@ -71,7 +72,7 @@ class Fun(commands.Cog):
         message = await ctx.send('*Pinging...*')
 
         await message.edit(
-            content=f":ping_pong: {round(client.latency * 1000)}ms"
+            content=f":ping_pong: {round(self.client.latency * 1000)}ms"
         )
 
     # * When users uses command (.hello)
@@ -157,87 +158,93 @@ class Fun(commands.Cog):
             await ctx.send(f'ดูเหมือนว่า {user.name} จะไม่ได้ทำอะไรอยู่นะ')
 
     # * When users use command (.send)
-    @commands.command()
-    async def send(self, ctx, arg1=None):
-        # ? if arg1 is None (.send)
-        if arg1 == None:
-            embed = discord.Embed(title="คำสั่งหมวด send <arg>")
-            embed.add_field(name="hug", value="ต้องการกอดหรอ?")
-            embed.add_field(name="izone", value="IZ*ONE น้องหยองชอบมักๆ")
-            embed.add_field(name="nude", value="ต้องการรูปสินะ... 555555")
-            embed.add_field(name="quote", value="อยากได้คำคมหรอ?")
-            embed.add_field(name="malee", value="แตกหนึ่ง! สวยพี่สวย!")
+    @commands.group(invoke_without_command-True)
+    async def send(self, ctx):
+        embed = discord.Embed(title="คำสั่งหมวด send <arg>")
 
-            await ctx.send(embed=embed)
+        embed.add_field(name="hug", value="ต้องการกอดหรอ?")
+        embed.add_field(name="izone", value="IZ*ONE น้องหยองชอบมักๆ")
+        embed.add_field(name="nude", value="ต้องการรูปสินะ... 555555")
+        embed.add_field(name="quote", value="อยากได้คำคมหรอ?")
+        embed.add_field(name="malee", value="แตกหนึ่ง! สวยพี่สวย!")
 
-        # ? If arg1 != None (.send <arg>)
-        else:
-            embed = discord.Embed()
+        await ctx.send(embed=embed)
 
-            # ? If arg1 is hug (.send hug)
-            if arg1 == 'hug':
-                # * Import assets/hug.json file
-                with open('assets/hug.json') as f:
-                    hug = json.load(f)
+    # ? If sub-command is hug (.send hug)
+    @send.group()
+    async def hug(self, ctx):
 
-                hug_rd = random.choice(hug)
+        # * Import assets/hug.json file
+        with open('assets/hug.json') as f:
+            hug = json.load(f)
 
-                embed.set_image(url=hug_rd)
+        hug_rd = random.choice(hug)
 
-            # ? If arg is izone (.send izone)
-            elif arg1 == 'izone':
-                # * Import assets/izone.json file
-                with open('assets/izone.json') as f:
-                    izone = json.load(f)
+        embed = discord.Embed()
+        embed.set_image(url=hug_rd)
 
-                izone_rd = random.choice(izone)
+        await ctx.send(embed=embed)
 
-                embed.set_image(url=izone_rd)
+    # ? If sub-command is izone (.send izone)
+    @send.group()
+    async def izone(self, ctx):
 
-            # ? If arg is nude (.send nude)
-            elif arg1 == 'nude':
-                embed.set_image(
-                    url='https://i.makeagif.com/media/2-10-2021/g_z7xe.gif')
+        # * Import assets/izone.json file
+        with open('assets/izone.json') as f:
+            izone = json.load(f)
 
-            # ? If arg is malee (.send malee)
-            elif arg1 == 'malee':
-                # * Import assets/malee.json file
-                with open('assets/malee.json') as f:
-                    malee = json.load(f)
+        izone_rd = random.choice(izone)
 
-                malee_rd = random.choice(malee)
+        embed = discord.Embed()
+        embed.set_image(url=izone_rd)
 
-                embed.set_image(url=malee_rd)
+        await ctx.send(embed=embed)
 
-            # ? If arg is quote (.send quote)
-            elif arg1 == 'quote':
-                # * Import assets/quote.json file
-                with open('assets/quote.json', encoding='utf-8') as f:
-                    quote = json.load(f)
+    # ? If sub-command is nude (.send nude)
+    @send.group()
+    async def nude(self, ctx):
+        embed = discord.Embed()
+        embed.set_image(
+            url='https://i.makeagif.com/media/2-10-2021/g_z7xe.gif'
+        )
 
-                quote_rd = random.choice(quote)
+        await ctx.send(embed=embed)
 
-                await ctx.send(f'> *{quote_rd}*')
-                return
+    # ? If sub-command is malee (.send malee)
+    @send.group()
+    async def malee(self, ctx):
+        # * Import assets/malee.json file
+        with open('assets/malee.json') as f:
+            malee = json.load(f)
 
-            # ? If arg is video (.send video)
-            elif arg1 == 'video':
-                # * Import assets/video.json file
-                with open('assets/video.json') as f:
-                    video = json.load(f)
+        malee_rd = random.choice(malee)
 
-                video_rd = random.choice(video)
+        embed = discord.Embed()
+        embed.set_image(url=malee_rd)
 
-                await ctx.send(video_rd)
-                return
+        await ctx.send(embed=embed)
 
-            # ? If arg is None of the above
-            # ! Example (.send quoter)
-            else:
-                await ctx.send("พิมพ์ผิดป้ะเนี่ย! พิมพ์ให้ถูกหน่อยดิวะ")
-                return
+    # ? If sub-command is quote (.send quote)
+    @send.group()
+    async def quote(self, ctx):
+        # * Import assets/quote.json file
+        with open('assets/quote.json', encoding='utf-8') as f:
+            quote = json.load(f)
 
-            await ctx.send(embed=embed)
+        quote_rd = random.choice(quote)
+
+        await ctx.send(f'> *{quote_rd}*')
+
+    # ? If sub-command is video (.send video)
+    @send.geoup()
+    async def video(self, ctx):
+        # * Import assets/video.json file
+        with open('assets/video.json') as f:
+            video = json.load(f)
+
+        video_rd = random.choice(video)
+
+        await ctx.send(video_rd)
 
 
 def setup(client):

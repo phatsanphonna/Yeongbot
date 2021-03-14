@@ -89,9 +89,6 @@ if __name__ == '__main__':
         if filename.endswith('.py'):
             client.load_extension(f'cogs.{filename[:-3]}')
 
-    client.unload_extension('cogs.Client')
-    client.load_extension('cogs.Client')
-
     
 # ! Run / Required Token to run
 client.run(TOKEN)
