@@ -63,6 +63,17 @@ class ClientInfo(commands.Cog):
             + 'คำสั่ง `.unmute me` จะเป็นการเปิดไมค์ของตัวเอง (ในกรณีโดน Server Mute อยู่)'
         )
 
+    @help.group()
+    async def roll(self, ctx):
+        await ctx.send('สุ่มตัวเลขจาก 1-10 (หรือกำหนดเอง)')
+
+    @help.group()
+    async def guessnumber(self, ctx):
+        await ctx.send('เดาตัวเลข')
+    
+    @help.group()
+    async def magicball(self, ctx):
+        await ctx.send('ลูกแก้ววิเศษจงบอกข้าเถิด ใครงามเลิศในปัตตานี...')
     # * When users uses command (.info)
     @commands.command()
     async def info(self, ctx):

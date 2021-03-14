@@ -51,6 +51,22 @@ class Fun(commands.Cog):
         if tries == 0:
             await ctx.send(f'ตัวเลขคือ {random_number}')
 
+    # * When users use command (.magicball)
+    @commands.command()
+    async def magicball(self, ctx, *, question=None):
+        if question is None:
+            await ctx.send('อย่าลืมใส่คำถามด้วยหล่ะนะ!')
+        else:
+            with open('assets/magicball.json', encoding='utf-8') as f:
+                all_answer = json.load(f)
+
+            answer = random.choice(all_answer)
+
+            await ctx.send(
+                f'คำถาม: {question}\n'
+                + f'ตอบ: {answer}'
+            )
+
     # * When users use command (.roll)
     @commands.command()
     async def roll(self, ctx, num1: int = None, num2: int = None):
