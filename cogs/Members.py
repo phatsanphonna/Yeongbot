@@ -10,7 +10,7 @@ CHANNEL_ID = int(os.environ['CHANNEL_ID'])
 AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
 
 
-class MembersEvent(commands.Cog):
+class Members(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -127,7 +127,8 @@ class MembersEvent(commands.Cog):
 
             await ctx.send(f"คุณไม่สามารถเรียกตัวเองได้นะคะ")
             await ctx.send(embed=embed)
+        
 
 
 def setup(client):
-    client.add_cog(MembersEvent(client))
+    client.add_cog(Members(client))

@@ -9,7 +9,7 @@ with open('assets/client_playing.json') as f:
     client_playing = json.load(f)
 
 tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
-on_ready_time = datetime.now() + tz_bangkok
+on_ready_time = datetime.now()
 
 GUILD_ID = int(os.environ['GUILD_ID'])
 CHANNEL_ID = int(os.environ['CHANNEL_ID'])

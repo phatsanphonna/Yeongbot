@@ -92,6 +92,7 @@ async def reload(ctx, all_cogs=None):
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         client.load_extension(f'cogs.{filename[:-3]}')
+        print(f'cogs.{filename[:-3]} loaded!')
 
 
 # ! Run / Required Token to run

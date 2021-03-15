@@ -78,7 +78,7 @@ class ClientInfo(commands.Cog):
     # * When users uses command (.info)
     @commands.command()
     async def info(self, ctx):
-        total_restart_time = (datetime.now()+tz_bangkok) - on_ready_time
+        total_restart_time = datetime.now() - on_ready_time
 
         m, s = divmod(int(total_restart_time.seconds), 60)
         h, m = divmod(m, 60)
