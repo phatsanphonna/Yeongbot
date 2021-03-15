@@ -112,7 +112,7 @@ class Fun(commands.Cog):
             for activity in user.activities:
                 if isinstance(activity, Spotify):
                     raw_current_length = activity.end - datetime.now()
-                    current_length = activity.duration - raw_current_length
+                    current_length = (activity.duration - raw_current_length) - tz_bangkok
                     created_at = activity.created_at + tz_bangkok
 
                     spotify_icon = 'https://i.pinimg.com/originals/83/3c/f5/833cf5fe43f8c92c1fcb85a68b29e585.png'
