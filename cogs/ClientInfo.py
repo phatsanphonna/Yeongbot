@@ -9,12 +9,12 @@ CRIT2X_RATE = 35
 AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
 
 tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
-on_ready_time = datetime.now() + tz_bangkok
 
 
 class ClientInfo(commands.Cog):
-    def __init__(self, client):
+    def __init__(self, client, on_ready_time):
         self.client = client
+        self.on_ready_time = on_ready_time
 
     # * When users uses command (.help)
     @commands.group(invoke_without_command=True)
@@ -70,11 +70,11 @@ class ClientInfo(commands.Cog):
     @help.group()
     async def guessnumber(self, ctx):
         await ctx.send('เดาตัวเลข')
-    
+
     @help.group()
     async def magicball(self, ctx):
         await ctx.send('ลูกแก้ววิเศษจงบอกข้าเถิด ใครงามเลิศในปัตตานี...')
-    
+
     # * When users uses command (.info)
     @commands.command()
     async def info(self, ctx):
@@ -94,8 +94,8 @@ class ClientInfo(commands.Cog):
         )
         embed.add_field(
             name='Last Restart',
-            value=f'Date: `{on_ready_time.strftime("%d/%m/%Y / %d %B %Y")}`\n\
-            Time: `{on_ready_time.strftime("%H:%M:%S")} GMT +7`\n\
+            value=f'Date: `{self.on_ready_time.strftime("%d/%m/%Y / %d %B %Y")}`\n\
+            Time: `{self.on_ready_time.strftime("%H:%M:%S")} GMT +7`\n\
             > `{int(d)} Days, {int(h)} Hours, {int(m)} Minutes, {int(s)} Seconds`',
             inline=False
         )
