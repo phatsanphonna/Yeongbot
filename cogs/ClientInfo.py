@@ -3,9 +3,6 @@ from discord.ext import commands
 from datetime import datetime, timedelta
 from pytz import timezone
 
-CRIT_RATE = 33
-CRIT2X_RATE = 35
-
 AUTHOR_ICON = 'https://i.ibb.co/tMbrntz/jang-wonyoung-nationality-cover2.jpg'
 
 tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
@@ -14,7 +11,6 @@ tz_bangkok = timedelta(hours=7)  # Bangkok's Timezone (GMT +7)
 class ClientInfo(commands.Cog):
     def __init__(self, client, on_ready_time):
         self.client = client
-        self.on_ready_time = on_ready_time
 
     # * When users uses command (.help)
     @commands.group(invoke_without_command=True)
@@ -74,41 +70,6 @@ class ClientInfo(commands.Cog):
     @help.group()
     async def magicball(self, ctx):
         await ctx.send('ลูกแก้ววิเศษจงบอกข้าเถิด ใครงามเลิศในปัตตานี...')
-
-    # * When users uses command (.info)
-    @commands.command()
-    async def info(self, ctx):
-        total_restart_time = datetime.now() - on_ready_time
-
-        m, s = divmod(int(total_restart_time.seconds), 60)
-        h, m = divmod(m, 60)
-
-        if total_restart_time.days > 0:
-            d = total_restart_time.days
-        else:
-            d = 0
-
-        embed = discord.Embed(
-            title='รายละเอียดของบอท',
-            color=0xFCF694
-        )
-        embed.add_field(
-            name='Last Restart',
-            value=f'Date: `{self.on_ready_time.strftime("%d/%m/%Y / %d %B %Y")}`\n\
-            Time: `{self.on_ready_time.strftime("%H:%M:%S")} GMT +7`\n\
-            > `{int(d)} Days, {int(h)} Hours, {int(m)} Minutes, {int(s)} Seconds`',
-            inline=False
-        )
-        embed.add_field(
-            name='Bot Critical Rate',
-            value=f'Critical Rate: `{CRIT_RATE}`%\n\
-            Critical Multiplier Rate: `{CRIT2X_RATE}`%'
-        )
-        embed.add_field(
-            name='Ping Time',
-            value=f'`{round(self.client.latency * 1000)}` ms')
-
-        await ctx.send(embed=embed)
 
     # * When users use command (.clock)
     @commands.command(aliases=['time'])
