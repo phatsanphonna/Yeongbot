@@ -15,7 +15,7 @@ GUILD_ID = int(os.environ['GUILD_ID'])
 CHANNEL_ID = int(os.environ['CHANNEL_ID'])
 
 
-class ClientReady(commands.Cog):
+class Client(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -54,4 +54,4 @@ class ClientReady(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(ClientReady(client))
+    client.add_cog(Client(client))
