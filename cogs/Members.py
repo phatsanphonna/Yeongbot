@@ -102,6 +102,41 @@ class Members(commands.Cog):
 
         await channel.send(embed=embed)
 
+    # * When users uses command (.whois)
+    @commands.command()
+    async def whois(self, ctx, member: discord.Member):
+        embed = discord.Embed(
+            title=f"น้อง {member.name}",
+            color=0xd9598c
+        )
+        embed.set_author(name="น้องหยอง", icon_url=AUTHOR_ICON)
+        embed.add_field(name="ชื่อ", value=member.name, inline=True)
+        embed.add_field(
+            name="ชื่อที่แสดง",
+            value=member.display_name, inline=True
+        )
+        embed.add_field(
+            name="วันที่สมัครไอดี",
+            value='{}'.format(
+                member.created_at.strftime("%d/%m/%Y")),
+            inline=False
+        )
+        embed.add_field(
+            name="วันที่เข้ามาในร้าน",
+            value='{}'.format(
+                member.joined_at.strftime("%d/%m/%Y")),
+            inline=False
+        )
+        embed.add_field(name="ไอดี", value=member.id, inline=False)
+        embed.set_footer(
+            icon_url=ctx.author.avatar_url,
+            text="ขอดูประวัติโดย {}".format(ctx.author.name)
+        )
+        embed.timestamp = datetime.utcnow()
+        embed.set_thumbnail(url=member.avatar_url)
+
+        await ctx.send(embed=embed)
+
     # * When user use command (.call)
     # TODO: User can multiple call in one command
     @commands.command()
@@ -127,7 +162,6 @@ class Members(commands.Cog):
 
             await ctx.send(f"คุณไม่สามารถเรียกตัวเองได้นะคะ")
             await ctx.send(embed=embed)
-        
 
 
 def setup(client):

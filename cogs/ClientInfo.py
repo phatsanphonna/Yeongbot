@@ -20,7 +20,7 @@ class ClientInfo(commands.Cog):
         embed.set_author(name="น้องหยอง",
                          icon_url=AUTHOR_ICON)
         embed.add_field(name="help",
-                        value=f"แสดงหน้าต่างนี้ไง", inline=True)  # ? (.help)
+                        value="แสดงหน้าต่างนี้ไง", inline=True)  # ? (.help)
         embed.add_field(name="whois <member>",
                         value="แสดงข้อมูลเกี่ยวกับคนในเซิฟเวอร์", inline=True)  # ? (.whois)
         embed.add_field(name="spotify / listening <member>",

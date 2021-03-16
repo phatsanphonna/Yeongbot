@@ -73,6 +73,8 @@ async def reload(ctx, all_cogs=None):
             for filename in os.listdir('./cogs'):
                 if filename.startswith('Client.py'):
                     pass
+                elif filename.startswith('ClientInfo.py'):
+                    pass
                 elif filename.endswith('.py'):
                     client.unload_extension(f'cogs.{filename[:-3]}')
                     client.load_extension(f'cogs.{filename[:-3]}')
