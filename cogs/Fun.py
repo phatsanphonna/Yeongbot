@@ -19,7 +19,7 @@ class Fun(commands.Cog):
         random_number = random.randint(1, 20)
         tries = 5
 
-        await ctx.send('Guessing Number from 1 to 10')
+        await ctx.send('Guessing Number from 1 to 20 (5 tries)')
 
         while tries != 0:
             num = await self.client.wait_for(
