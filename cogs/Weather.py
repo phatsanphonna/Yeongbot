@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 
 from pyowm import OWM
-from pyowm.utils import timestamps
 
 # pyowm Settings
 owm = OWM('21a163c142a502fa9a2bfddfaf0849ce')
