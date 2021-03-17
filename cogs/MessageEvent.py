@@ -4,6 +4,7 @@ import random
 import asyncio
 import requests
 import os
+import json
 
 # * lINE Bot Notifications
 linebot_url = 'https://notify-api.line.me/api/notify'
@@ -16,6 +17,7 @@ linebot_headers = {
 CRIT_RATE = 33
 CRIT2X_RATE = 35
 CRIT_MULTIPLY_RATE1, CRIT_MULTIPLY_RATE2 = 1, 2
+
 
 class MessageEvent(commands.Cog):
     def __init__(self, client):
@@ -83,6 +85,8 @@ class MessageEvent(commands.Cog):
         sundick = ['sundick', 'ซันดิ้ก', 'mute me senpai']
         for sundick in sundick:
             if sundick in message.content.lower():
+                with open('users.json', 'r') as f:
+                    users = json.load(f)
                 f'''
                     # ! = ALGORITHM EXPLAINED =
                     This is a random that user will get mute
@@ -112,12 +116,15 @@ class MessageEvent(commands.Cog):
                             + f"น้อง {sender.display_name} โดนปิดไมค์ไป `{timer}` วินาที"
                         )
                         pass
+                        await remove_relation_score(users, message.author, 10)
+
                     else:
                         timer = int(5)
                         await message.channel.send(
                             f"น้อง {sender.display_name} โดนปิดไมค์ไป `{timer}` วินาที"
                         )
                         pass
+                        await remove_relation_score(users, message.author, 10)
 
                     await sender.edit(mute=True, deafen=True)
 
@@ -156,6 +163,19 @@ class MessageEvent(commands.Cog):
                     if no in msg.content.lower():
                         await message.channel.send('ทำไมไม่ไปนอนหล่ะ บอกให้ไปนอนไง!')
                         break
+
+
+async def update_data(users, user):
+    users[user.id] = {}
+    users[user.id]['relation_score'] = 100
+
+
+async def add_relation_score(users, user, relation_score):
+    users[user.id]['relation_score'] += relation_score
+
+
+async def remove_relation_score(users, user, relation_score):
+    users[user.id]['relation_score'] -= relation_score
 
 
 def setup(client):

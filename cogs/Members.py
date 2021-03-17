@@ -4,6 +4,7 @@ from datetime import datetime
 from pytz import timezone
 import random
 import os
+import json
 
 GUILD_ID = int(os.environ['GUILD_ID'])
 CHANNEL_ID = int(os.environ['CHANNEL_ID'])
@@ -61,9 +62,14 @@ class Members(commands.Cog):
         embed_dm_image.set_image(
             url='https://thumbs.gfycat.com/FarflungScaredDartfrog-size_restricted.gif')
 
-        # ! This is important!,
-        # ! do not !!forget!! this!,
-        # ! Set This before send message.
+        with open('users.json', 'r') as f:
+            users = json.load(f)
+
+        await update_data(users, member)
+
+        with open('users.json', 'w') as f:
+            json.dump(f)
+
         await client.wait_until_ready()
 
         await member.add_roles(role)
@@ -95,9 +101,6 @@ class Members(commands.Cog):
         embed.set_footer(text=member.name + " ออกจากเซิฟไปตอน " +
                          new_omr_timezone_time.strftime("%d/%m/%Y, %H:%M"))
 
-        # ! This is important!,
-        # ! do not !!forget!! this!,
-        # ! Set This before send message.
         await client.wait_until_ready()
 
         await channel.send(embed=embed)
@@ -162,6 +165,19 @@ class Members(commands.Cog):
 
             await ctx.send(f"คุณไม่สามารถเรียกตัวเองได้นะคะ")
             await ctx.send(embed=embed)
+
+
+async def update_data(users, user):
+    users[user.id] = {}
+    users[user.id]['relation_score'] = 0
+
+
+async def add_relation_score(users, user, relation_score):
+    users[user.id]['relation_score'] += relation_score
+
+
+async def remove_relation_score(users, user, relation_score):
+    users[user.id]['relation_score'] -= relation_score
 
 
 def setup(client):
