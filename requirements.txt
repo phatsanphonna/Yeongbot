@@ -1,5 +1,3 @@
 discord
 pytz
 requests
-pymongo[tls,srv]
-dnspython
