@@ -70,7 +70,7 @@ class Members(commands.Cog):
         with open('users.json', 'w') as f:
             json.dump(f)
 
-        await client.wait_until_ready()
+        await self.client.wait_until_ready()
 
         await member.add_roles(role)
         await channel.send(embed=embed_channel)
@@ -101,7 +101,7 @@ class Members(commands.Cog):
         embed.set_footer(text=member.name + " ออกจากเซิฟไปตอน " +
                          new_omr_timezone_time.strftime("%d/%m/%Y, %H:%M"))
 
-        await client.wait_until_ready()
+        await self.client.wait_until_ready()
 
         await channel.send(embed=embed)
 
