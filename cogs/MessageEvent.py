@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 import random
 import asyncio
 import requests
@@ -85,8 +86,7 @@ class MessageEvent(commands.Cog):
         sundick = ['sundick', 'ซันดิ้ก', 'mute me senpai']
         for sundick in sundick:
             if sundick in message.content.lower():
-                with open('users.json', 'r') as f:
-                    users = json.load(f)
+
                 f'''
                     # ! = ALGORITHM EXPLAINED =
                     This is a random that user will get mute
@@ -139,7 +139,9 @@ class MessageEvent(commands.Cog):
                         f"น้อง {sender.display_name} โชคดีที่ไม่โดนปิดไมค์ไปนะ "
                         + "แต่ครั้งหน้าก็ระวังไว้ด้วยละกันหล่ะ"
                     )
+
                 return
+
         sleep = ['ง่วง', 'อยากนอน']
         for sleep in sleep:
             if sleep in message.content.lower():
@@ -161,19 +163,6 @@ class MessageEvent(commands.Cog):
                     if no in msg.content.lower():
                         await message.channel.send('ทำไมไม่ไปนอนหล่ะ บอกให้ไปนอนไง!')
                         break
-
-
-async def update_data(users, user):
-    users[user.id] = {}
-    users[user.id]['relation_score'] = 100
-
-
-async def add_relation_score(users, user, relation_score):
-    users[user.id]['relation_score'] += relation_score
-
-
-async def remove_relation_score(users, user, relation_score):
-    users[user.id]['relation_score'] -= relation_score
 
 
 def setup(client):
