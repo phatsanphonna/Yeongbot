@@ -62,14 +62,6 @@ class Members(commands.Cog):
         embed_dm_image.set_image(
             url='https://thumbs.gfycat.com/FarflungScaredDartfrog-size_restricted.gif')
 
-        with open('users.json', 'r') as f:
-            users = json.load(f)
-
-        await update_data(users, member)
-
-        with open('users.json', 'w') as f:
-            json.dump(f)
-
         await self.client.wait_until_ready()
 
         await member.add_roles(role)

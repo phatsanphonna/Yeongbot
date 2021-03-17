@@ -116,7 +116,6 @@ class MessageEvent(commands.Cog):
                             + f"น้อง {sender.display_name} โดนปิดไมค์ไป `{timer}` วินาที"
                         )
                         pass
-                        await remove_relation_score(users, message.author, 10)
 
                     else:
                         timer = int(5)
@@ -124,7 +123,6 @@ class MessageEvent(commands.Cog):
                             f"น้อง {sender.display_name} โดนปิดไมค์ไป `{timer}` วินาที"
                         )
                         pass
-                        await remove_relation_score(users, message.author, 10)
 
                     await sender.edit(mute=True, deafen=True)
 
