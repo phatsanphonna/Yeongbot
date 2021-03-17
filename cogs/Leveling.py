@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 
 from pymongo import MongoClient
+import dnspython
 import os
 
 cluster_password = os.environ['mongo_password']
