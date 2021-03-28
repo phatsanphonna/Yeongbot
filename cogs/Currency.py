@@ -15,7 +15,7 @@ class Currency(commands.Cog):
         currency1, currency2 = convert_text.split(' to ')
         amount, currency1 = currency1.split(' ')
 
-        converted_currency = c.convert(int(amount), currency1, currency2)
+        converted_currency = c.convert(float(amount), currency1, currency2)
 
         await ctx.send(f'{currency1} {amount} is equal {currency2} {converted_currency:.3}')
 
