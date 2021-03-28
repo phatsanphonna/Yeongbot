@@ -159,18 +159,5 @@ class Members(commands.Cog):
             await ctx.send(embed=embed)
 
 
-async def update_data(users, user):
-    users[user.id] = {}
-    users[user.id]['relation_score'] = 0
-
-
-async def add_relation_score(users, user, relation_score):
-    users[user.id]['relation_score'] += relation_score
-
-
-async def remove_relation_score(users, user, relation_score):
-    users[user.id]['relation_score'] -= relation_score
-
-
 def setup(client):
     client.add_cog(Members(client))

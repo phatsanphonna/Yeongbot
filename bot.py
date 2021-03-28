@@ -71,7 +71,7 @@ async def reload(ctx, all_cogs=None):
     if ctx.author is ctx.guild.owner:
         if all_cogs is None:
             for filename in os.listdir('./cogs'):
-                if filename.startswith('Client.py'):
+                if filename.startswith('Client.py') or f:
                     pass
                 elif filename.startswith('ClientInfo.py'):
                     pass
