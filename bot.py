@@ -1,12 +1,8 @@
 import discord
-from discord.ext import commands, tasks
-
-import datetime
+from discord.ext import commands
 from datetime import datetime, timedelta
-from itertools import cycle
 
 import json
-import requests
 import os
 
 # * Import assets/client_playing.json file
@@ -67,9 +63,9 @@ async def unload(ctx, extension):
 
 # ? Reload Cogs
 @client.command()
-async def reload(ctx, all_cogs=None):
+async def reload(ctx, filename=None):
     if ctx.author is ctx.guild.owner:
-        if all_cogs is None:
+        if filename is None:
             for filename in os.listdir('./cogs'):
                 if filename.startswith('Client.py') or f:
                     pass
@@ -81,12 +77,12 @@ async def reload(ctx, all_cogs=None):
 
                     print(f'cogs.{filename[:-3]} reloaded!')
         else:
-            if all_cogs.endswith('.py'):
-                client.unload_extension(f'cogs.{all_cogs[:-3]}')
-                client.load_extension(f'cogs.{all_cogs[:-3]}')
+            if filename.endswith('.py'):
+                client.unload_extension(f'cogs.{filename[:-3]}')
+                client.load_extension(f'cogs.{filename[:-3]}')
             else:
-                client.unload_extension(f'cogs.{all_cogs}')
-                client.load_extension(f'cogs.{all_cogs}')
+                client.unload_extension(f'cogs.{filename}')
+                client.load_extension(f'cogs.{filename}')
 
             print(f'cogs.{filename} reloaded!')
     else:

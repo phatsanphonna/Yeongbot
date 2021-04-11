@@ -104,7 +104,7 @@ class Fun(commands.Cog):
     async def spotify(self, ctx, user: discord.Member = None):
         # ? If users did not put <username> argument,
         # ? user will be sender (ctx.author)
-        if user == None:
+        if user is None:
             user = ctx.author
             pass
 

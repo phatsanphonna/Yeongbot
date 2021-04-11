@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from datetime import datetime, timedelta
 import json
 import os
@@ -89,7 +89,6 @@ class Client(commands.Cog):
             value=f'`{round(self.client.latency * 1000)}` ms')
 
         await ctx.send(embed=embed)
-
 
 def setup(client):
     client.add_cog(Client(client))

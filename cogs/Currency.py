@@ -11,13 +11,18 @@ class Currency(commands.Cog):
 
     @commands.command()
     async def convert(self, ctx, *, convert_text):
-        convert_text = str(input())
         currency1, currency2 = convert_text.split(' to ')
         amount, currency1 = currency1.split(' ')
 
         converted_currency = c.convert(float(amount), currency1, currency2)
 
-        await ctx.send(f'{currency1} {amount} is equal {currency2} {converted_currency:.3}')
+        await ctx.send(f'{currency1} {amount} is equals {currency2} {converted_currency:.3}')
+
+    @commands.command()
+    async def currency(self, ctx, convert_c):
+        currency = c.convert(1, convert_c, 'THB')
+
+        await ctx.send(f'1 {convert_c} is equals {currency:.2f} Thai Baht')
 
 
 def setup(client):

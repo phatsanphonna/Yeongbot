@@ -133,6 +133,6 @@ secret/
 
 # Other Files
 test.py
-criticalcalc.py
-for anything happened with cogs.py
 Leveling.py
+.vscode
+.idea
