@@ -10,14 +10,14 @@ class Currency(commands.Cog):
 
     @commands.command()
     async def money(self, ctx):
-        with open('users.json') as f:
+        with open('users.json', encoding='utf-8') as f:
             users = json.load(f)
 
         if str(ctx.author.id) not in users:
             users[str(ctx.author.id)]['relations'] = 1
             users[str(ctx.author.id)]['relations'] = 1
             
-            with open('users.json', 'w') as f:
+            with open('users.json', 'w', encoding='utf-8') as f:
                 json.dump(users, f)
         
         print(users)
