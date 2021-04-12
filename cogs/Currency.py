@@ -18,7 +18,7 @@ class Currency(commands.Cog):
     async def stats(self, ctx):
         # user_id = db.find_one(db[str(ctx.author.id)])
 
-        if str(ctx.author.id) in db:
+        if str(ctx.author.id) not in db:
             data = {
                 str(ctx.author.id): {
                     'relations': 100
