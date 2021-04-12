@@ -8,16 +8,17 @@ MONGO_PASWORD = os.environ['mongo_password']
 cluster = pymongo.MongoClient(
     f'mongodb+srv://ssuniie:{MONGO_PASWORD}@discord-bot.qwo3e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 )
-db = cluster.Yeongbot.users
+db = cluster['Yeongbot']['users']
 
 class Currency(commands.Cog):
     def __init__(self, client):
         self.client = client
 
     @commands.command()
-    async def stats(self, ctx, member):
-        id = db.find_one(db[str(ctx.author.id)])
-        if str(ctx.author.id) not in db.users:
+    async def stats(self, ctx):
+        user_id = db.find_one(db[str(ctx.author.id)])
+        
+        if user_id is None:
             data = {
                 str(ctx.author.id): {
                     'relations': 100
