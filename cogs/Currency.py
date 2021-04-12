@@ -8,7 +8,7 @@ MONGO_PASWORD = os.environ['mongo_password']
 cluster = pymongo.MongoClient(
     f'mongodb+srv://ssuniie:{MONGO_PASWORD}@discord-bot.qwo3e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 )
-db = cluster['Yeongbot']['users']
+db = cluster.Yeongbot.users
 
 class Currency(commands.Cog):
     def __init__(self, client):
@@ -26,7 +26,7 @@ class Currency(commands.Cog):
             db.insert_one(data)
             await ctx.send('database added sucessfully!')
         else:
-            await ctx.send(db[str(ctx.author.id)]['relations'])
+            await ctx.send(user_id['relations'])
 
 
 def setup(client):
