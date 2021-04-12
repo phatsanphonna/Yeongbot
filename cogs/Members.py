@@ -5,6 +5,7 @@ from datetime import datetime
 from pytz import timezone
 import random
 import os
+import json
 
 GUILD_ID = int(os.environ['GUILD_ID'])
 CHANNEL_ID = int(os.environ['CHANNEL_ID'])
@@ -100,21 +101,20 @@ class Members(commands.Cog):
     # * When users uses command (.whois)
     @commands.command()
     async def whois(self, ctx, member: discord.Member):
+        with open('users.json') as f:
+            users = json.load(f)
+        
+        users_db = users[str(member.id)]
+
         embed = discord.Embed(
-            title=f"น้อง {member.name}",
+            title=f'Person Inspector',
             color=0xd9598c
         )
-        embed.set_author(name="น้องหยอง", icon_url=AUTHOR_ICON)
+        embed.set_author(name=member.name, icon_url=member.avatar_url)
         embed.add_field(name="ชื่อ", value=member.name, inline=True)
         embed.add_field(
             name="ชื่อที่แสดง",
             value=member.display_name, inline=True
-        )
-        embed.add_field(
-            name="วันที่สมัครไอดี",
-            value='{}'.format(
-                member.created_at.strftime("%d/%m/%Y")),
-            inline=False
         )
         embed.add_field(
             name="วันที่เข้ามาในร้าน",
@@ -122,7 +122,10 @@ class Members(commands.Cog):
                 member.joined_at.strftime("%d/%m/%Y")),
             inline=False
         )
-        embed.add_field(name="ไอดี", value=member.id, inline=False)
+        embed.add_field(
+            name='ค่าความสัมพันธ์กับบอท',
+            value=f"+{users_db['relations']}" if users_db['relations'] >= 0 else f"{users_db['relations']}"
+        )
         embed.set_footer(
             icon_url=ctx.author.avatar_url,
             text="ขอดูประวัติโดย {}".format(ctx.author.name)
