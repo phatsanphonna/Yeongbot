@@ -16,15 +16,15 @@ class Currency(commands.Cog):
 
     @commands.command()
     async def stats(self, ctx):
-        # user_id = db.find_one(db[str(ctx.author.id)])
+        user_id = db.find_one({str(ctx.author.id)})
 
-        if str(ctx.author.id) not in db:
+        if str(ctx.author.id) is None:
             data = {
                 str(ctx.author.id): {
                     'relations': 100
                 }
             }
-            db.append(data)
+            db.insert_one(data)
             await ctx.send('database added sucessfully!')
         else:
             await ctx.send(db[str(ctx.author.id)]['relations'])
