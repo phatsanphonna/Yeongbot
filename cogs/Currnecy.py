@@ -13,6 +13,15 @@ class Currency(commands.Cog):
         with open('users.json') as f:
             users = json.load(f)
 
+        if ctx.author.id in users['user_id']:
+            print(users['user_id'])
+        else:
+            new_id = {
+                'id': ctx.author.id,
+                'money': 1
+            }
+            print(new_id)
+            
         print(users)
 
 
