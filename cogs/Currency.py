@@ -1,8 +1,14 @@
 import discord
 from discord.ext import commands
 
-import json
+import pymongo
+import os
 
+MONGO_PASWORD = os.environ['mongo_password']
+cluster = pymongo.MongoClient(
+    f'mongodb+srv://ssuniie:{MONGO_PASWORD}@discord-bot.qwo3e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+)
+db = cluster.Yeongbot.users
 
 class Currency(commands.Cog):
     def __init__(self, client):
@@ -10,22 +16,17 @@ class Currency(commands.Cog):
 
     @commands.command()
     async def stats(self, ctx, member):
-        with open('users.json', encoding='utf-8') as f:
-            users = json.load(f)
-
-        if str(ctx.author.id) not in users:
+        id = db.find_one(db[str(ctx.author.id)])
+        if str(ctx.author.id) not in db.users:
             data = {
                 str(ctx.author.id): {
                     'relations': 100
                 }
             }
-            users.update(data)
-
-            with open('users.json', 'w', encoding='utf-8') as f:
-                json.dump(users, f)
+            db.insert_one(data)
+            await ctx.send('database added sucessfully!')
         else:
-            users[str(ctx.author.id)]['money'] += 1
-            await ctx.send(users[str(ctx.author.id)]['money'])
+            await ctx.send(db[str(ctx.author.id)]['relations'])
 
 
 def setup(client):

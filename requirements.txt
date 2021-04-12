@@ -2,3 +2,4 @@ discord
 pytz
 requests
 CurrencyConverter
+pymongo
