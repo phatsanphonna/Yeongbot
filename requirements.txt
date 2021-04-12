@@ -2,4 +2,4 @@ discord
 pytz
 requests
 CurrencyConverter
-pymongo
+pymongo[tls, srv]
