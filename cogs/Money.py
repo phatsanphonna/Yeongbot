@@ -5,7 +5,7 @@ from currency_converter import CurrencyConverter
 c = CurrencyConverter()
 
 
-class Currency(commands.Cog):
+class Money(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -14,7 +14,7 @@ class Currency(commands.Cog):
         currency1, currency2 = convert_text.split(' to ')
         amount, currency1 = currency1.split(' ')
 
-        converted_currency = c.convert(float(amount), currency1, currency2)
+        converted_currency = c.convert(float(amount), currency1.upper(), currency2.upper())
 
         await ctx.send(f'{currency1} {amount} is equals {currency2} {converted_currency:.3}')
 
@@ -26,4 +26,4 @@ class Currency(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Currency(client))
+    client.add_cog(Money(client))
