@@ -6,6 +6,13 @@ from pytz import timezone
 import random
 import os
 import json
+import pymongo
+
+MONGO_PASWORD = os.environ['mongo_password']
+cluster = pymongo.MongoClient(
+    f'mongodb+srv://ssuniie:{MONGO_PASWORD}@discord-bot.qwo3e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+)
+db = cluster.Yeongbot.users
 
 GUILD_ID = int(os.environ['GUILD_ID'])
 CHANNEL_ID = int(os.environ['CHANNEL_ID'])
@@ -101,10 +108,7 @@ class Members(commands.Cog):
     # * When users uses command (.whois)
     @commands.command()
     async def whois(self, ctx, member: discord.Member):
-        with open('users.json') as f:
-            users = json.load(f)
-        
-        users_db = users[str(member.id)]
+        user = db.find_one({'id': member.id})
 
         embed = discord.Embed(
             title=f'Person Inspector',
@@ -124,7 +128,7 @@ class Members(commands.Cog):
         )
         embed.add_field(
             name='ค่าความสัมพันธ์กับบอท',
-            value=f"+{users_db['relations']}" if users_db['relations'] >= 0 else f"{users_db['relations']}"
+            value=f"+{user['relations']}" if user['relations'] >= 0 else f"{user['relations']}"
         )
         embed.set_footer(
             icon_url=ctx.author.avatar_url,

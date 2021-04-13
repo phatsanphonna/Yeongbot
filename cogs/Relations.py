@@ -10,7 +10,7 @@ cluster = pymongo.MongoClient(
 )
 db = cluster.Yeongbot.users
 
-class Currency(commands.Cog):
+class Relations(commands.Cog):
     def __init__(self, client):
         self.client = client
 
@@ -30,4 +30,4 @@ class Currency(commands.Cog):
 
 
 def setup(client):
-    client.add_cog(Currency(client))
+    client.add_cog(Relations(client))
