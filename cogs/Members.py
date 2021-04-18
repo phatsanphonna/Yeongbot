@@ -8,9 +8,9 @@ import os
 import json
 import pymongo
 
-MONGO_PASWORD = os.environ['mongo_password']
+MONGO_PASSWORD = os.environ['mongo_password']
 cluster = pymongo.MongoClient(
-    f'mongodb+srv://ssuniie:{MONGO_PASWORD}@discord-bot.qwo3e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+    f'mongodb+srv://ssuniie:{MONGO_PASSWORD}@discord-bot.qwo3e.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
 )
 db = cluster.Yeongbot.users
 
