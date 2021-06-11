@@ -109,59 +109,60 @@ class Fun(commands.Cog):
         
         if activity is None:
             await ctx.send(f'ดูเหมือนว่า {user.name} จะไม่ได้ทำอะไรอยู่นะ')
-        else:
-            raw_current_length = activity.end - datetime.now()
-            current_length = (activity.duration - raw_current_length) - tz_bangkok
-            created_at = activity.created_at + tz_bangkok
+            return
+        
+        raw_current_length = activity.end - datetime.now()
+        current_length = (activity.duration - raw_current_length) - tz_bangkok
+        created_at = activity.created_at + tz_bangkok
 
-            spotify_icon = 'https://i.pinimg.com/originals/83/3c/f5/833cf5fe43f8c92c1fcb85a68b29e585.png'
+        spotify_icon = 'https://i.pinimg.com/originals/83/3c/f5/833cf5fe43f8c92c1fcb85a68b29e585.png'
 
-            """
-            divmod use for situation 'datetime.timedelta' has no attribute 'strftime'
-            calculate or convert time like from seconds to minutes
-            """
-            m1, s1 = divmod(int(activity.duration.seconds), 60)
-            m2, s2 = divmod(int(current_length.seconds), 60)
+        """
+        divmod use for situation 'datetime.timedelta' has no attribute 'strftime'
+        calculate or convert time like from seconds to minutes
+        """
+        m1, s1 = divmod(int(activity.duration.seconds), 60)
+        m2, s2 = divmod(int(current_length.seconds), 60)
 
-            # ? if second(s1) is odd number (0-9)
-            if s1 < 10: song_length = f'{m1}:0{s1}'
-            else: song_length = f'{m1}:{s1}'
+        # ? if second(s1) is odd number (0-9)
+        if s1 < 10: song_length = f'{m1}:0{s1}'
+        else: song_length = f'{m1}:{s1}'
 
-            # ? if second(s2) is odd number (0-9)
-            if s2 < 10: current_length = f'{m2}:0{s2}'
-            else: current_length = f'{m2}:{s2}'
+        # ? if second(s2) is odd number (0-9)
+        if s2 < 10: current_length = f'{m2}:0{s2}'
+        else: current_length = f'{m2}:{s2}'
 
-            embed = discord.Embed(
-                title=f"น้อง {user.display_name} กำลังฟังเพลงอะไรอยู่กันนะ? :thinking:",
-                color=activity.color,
-                description=":musical_note: **น้อง `{}` กำลังฟัง {}**".format(
-                    user.display_name,
-                    f"[{activity.title}](https://open.spotify.com/track/{activity.track_id})"
+        embed = discord.Embed(
+            title=f"น้อง {user.display_name} กำลังฟังเพลงอะไรอยู่กันนะ? :thinking:",
+            color=activity.color,
+            description=":musical_note: **น้อง `{}` กำลังฟัง {}**".format(
+                user.display_name,
+                f"[{activity.title}](https://open.spotify.com/track/{activity.track_id})"
+            )
+            
+        )
+        embed.set_author(name="Spotfiy", icon_url=spotify_icon)
+        embed.set_thumbnail(url=activity.album_cover_url)
+        embed.add_field(name="ชื่อเพลง", value=activity.title)
+        embed.add_field(name="ศิลปิน", value=activity.artist)
+        embed.add_field(
+            name="อัลบั้ม", value=activity.album, inline=False
+        )
+        embed.add_field(
+            name="ระยะเวลา", value=f"{current_length}/{song_length}",
+            inline=True
+        )
+        embed.set_footer(
+            icon_url=user.avatar_url,
+            text=(
+                "{} เริ่มฟังเพลงตอน {} น.".format(
+                    user.name,
+                    created_at.strftime("%H:%M")
                 )
-                
             )
-            embed.set_author(name="Spotfiy", icon_url=spotify_icon)
-            embed.set_thumbnail(url=activity.album_cover_url)
-            embed.add_field(name="ชื่อเพลง", value=activity.title)
-            embed.add_field(name="ศิลปิน", value=activity.artist)
-            embed.add_field(
-                name="อัลบั้ม", value=activity.album, inline=False
-            )
-            embed.add_field(
-                name="ระยะเวลา", value=f"{current_length}/{song_length}",
-                inline=True
-            )
-            embed.set_footer(
-                icon_url=user.avatar_url,
-                text=(
-                    "{} เริ่มฟังเพลงตอน {} น.".format(
-                        user.name,
-                        created_at.strftime("%H:%M")
-                    )
-                )
-            )
+        )
 
-            await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     # * When users use command (.send)
     @commands.group(invoke_without_command=True)

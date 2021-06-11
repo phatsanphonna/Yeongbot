@@ -45,7 +45,7 @@ class Client(commands.Cog):
                 name='.help'
             )
         )
-        await channel.send(embed=embed)
+        # await channel.send(embed=embed)
 
     # * When client joined the server.
     @commands.Cog.listener()
